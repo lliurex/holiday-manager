@@ -1,0 +1,7 @@
+GtkCalendar {
+  margin: 10px;
+  padding: 5px;
+  outline-offset: -1px; }
+
+GtkCalendar#CALENDAR:active, GtkCalendar#CALENDAR:active:focus, GtkCalendar#CALENDAR:active:hover, GtkCalendar#CALENDAR:active:insensitive {
+    color: #ff0000; }
