@@ -1,9 +1,8 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: epi
-Source: https://svn.lliurex.net/xenial/bell-scheduler
+Upstream-Name: holiday-manager
 
 Files: *
-Copyright: 2017 Juan Ramon Pelegrina <juapesai@hotmail.com>
+Copyright: 2018 Juan Ramon Pelegrina <juapesai@hotmail.com>
 License: GPL-3.0+
 
 License: GPL-3.0+
