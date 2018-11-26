@@ -47,12 +47,16 @@ class HolidayBox(Gtk.Box):
 		self.main_box=builder.get_object("holiday_box")
 		self.edit_data_window=builder.get_object("edit_data_window")
 		self.holiday_calendar=builder.get_object("calendar")
+		self.date_separator_label=builder.get_object("date_separaror_label")
+		self.date_separator=builder.get_object("date_separator")
 		self.single_day_rb=builder.get_object("single_day_rb")
 		self.single_day_entry=builder.get_object("single_day_entry")
 		self.range_day_rb=builder.get_object("range_day_rb")
 		self.range_day1_entry=builder.get_object("range_day1_entry")
 		self.range_day2_entry=builder.get_object("range_day2_entry")
 		self.remove_range_button=builder.get_object("remove_range_button")
+		self.comment_label_separator=builder.get_object("comment_label_separator")
+		self.comment_separator=builder.get_object("comment_separator")
 		self.coment_day_entry=builder.get_object("day_comment_entry")
 		self.add_day_button=builder.get_object("add_day_button")
 		self.edit_message_label=builder.get_object("edit_message_label")
@@ -129,6 +133,15 @@ class HolidayBox(Gtk.Box):
 		self.style_provider.load_from_file(f)
 		Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(),self.style_provider,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 		self.holiday_calendar.set_name("CALENDAR")
+		self.coment_day_entry.set_name("CUSTOM-ENTRY")
+		self.single_day_entry.set_name("CUSTOM-ENTRY")
+		self.range_day1_entry.set_name("CUSTOM-ENTRY")
+		self.range_day2_entry.set_name("CUSTOM-ENTRY")
+		self.date_separator_label.set_name("HEADER-LABEL")
+		self.date_separator.set_name("HEADER_SEPARATOR")
+		self.comment_label_separator.set_name("HEADER-LABEL")
+		self.comment_separator.set_name("HEADER_SEPARATOR")
+
 
 	#def set_css_info	
 
