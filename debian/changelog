@@ -1,3 +1,9 @@
+holiday-manager (0.1.16) bionic; urgency=medium
+
+  * Applied new style to the graphical interface
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 26 Nov 2018 12:21:27 +0100
+
 holiday-manager (0.1.15) bionic; urgency=medium
 
   * Initial release for bionic
