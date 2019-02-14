@@ -3,9 +3,9 @@ type=python
 path=HolidayListManager.py
 class=HolidayListManager
 [METHODS]
-read_conf=adm,admins,teachers
-add_day=adm,admins,teachers
-delete_day=adm,admins,teachers
-reset_holiday_list=adm,admins,teachers
-import_holiday_list=adm,admins,teachers
-(us)export_holiday_list=adm,admins,teachers
+read_conf=sudo,admins,teachers
+add_day=sudo,admins,teachers
+delete_day=sudo,admins,teachers
+reset_holiday_list=sudo,admins,teachers
+import_holiday_list=sudo,admins,teachers
+(us)export_holiday_list=sudo,admins,teachers
