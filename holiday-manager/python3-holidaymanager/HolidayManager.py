@@ -20,6 +20,7 @@ class HolidayManager(object):
 		self.config_dir=os.path.expanduser("/etc/manageHolidays/")
 		self.config_file=os.path.join(self.config_dir,"holiday_list")
 		self.block_file=os.path.join(self.config_dir,"holiday_tmp")
+		self.holiday_list={}
 		#self.read_conf()
 
 	#def __init__
@@ -180,13 +181,13 @@ class HolidayManager(object):
 		if os.path.exists(self.config_file):
 			self.read_conf()
 
-		for item in self.holiday_list:
-			tmp_list=[]
-			if "-" in item:
-				tmp_list=self.get_days_inrange(item)
-				holiday_days=holiday_days+tmp_list
-			else:
-				holiday_days.append(item)
+			for item in self.holiday_list:
+				tmp_list=[]
+				if "-" in item:
+					tmp_list=self.get_days_inrange(item)
+					holiday_days=holiday_days+tmp_list
+				else:
+					holiday_days.append(item)
 
 
 		if day in holiday_days:
