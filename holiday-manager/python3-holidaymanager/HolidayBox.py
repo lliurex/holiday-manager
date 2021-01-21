@@ -231,7 +231,7 @@ class HolidayBox(Gtk.Box):
 
 		result=self.n4d_holiday.read_conf(self.credentials,'HolidayListManager')
 
-		holiday_list=result["info"]
+		holiday_list=result['return']["info"]
 		list_days=self.order_date(holiday_list)
 		self.listdays_store.clear()
 		color_palette=['LightGreen','bisque']
@@ -508,13 +508,13 @@ class HolidayBox(Gtk.Box):
 				if self.edit_day:
 					if self.day!="" and self.day!=new_day:
 						result=self.n4d_holiday.delete_day(self.credentials,"HolidayListManager",self.day)
-						code=result["code"]
+						code=result['return']["code"]
 					
-				if result["status"]:			
+				if result["status"]==0:			
 					#result=self.holidayManager.add_day(new_day,comment)
 					result=self.n4d_holiday.add_day(self.credentials,'HolidayListManager',new_day,comment)
-					code=result["code"]
-					if result["status"]:
+					code=result['return']["code"]
+					if result["status"]==0:
 						self.get_holidaylist()
 						self.init_calendar()
 
@@ -577,13 +577,13 @@ class HolidayBox(Gtk.Box):
 		dialog.destroy()
 		if response == Gtk.ResponseType.YES:	
 			result=self.n4d_holiday.delete_day(self.credentials,'HolidayListManager',self.day)
-			if result['status']:
+			if result['status']==0:
 				self.get_holidaylist()
 				self.init_calendar()
 			else:
 				error=True
 
-			self.manage_message(error,result['code'])	
+			self.manage_message(error,result['return']['code'])	
 
 	#def remove_day_clicked		
 
@@ -598,13 +598,13 @@ class HolidayBox(Gtk.Box):
 		if response == Gtk.ResponseType.YES:	
 			result=self.n4d_holiday.reset_holiday_list(self.credentials,'HolidayListManager')
 
-			if result['status']:
+			if result['status']==0:
 				self.get_holidaylist()
 				self.init_calendar()
 			else:
 				error=True
 
-			self.manage_message(error,result['code'])
+			self.manage_message(error,result['return']['code'])
 
 	#def remove_daylist_clicked		
 
@@ -622,10 +622,10 @@ class HolidayBox(Gtk.Box):
 			dest=dialog.get_filename()
 			dialog.destroy()
 			result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)
-			if not result["status"]:
+			if result["status"]!=0:
 				error=True
 
-			self.manage_message(error,result["code"])
+			self.manage_message(error,result['return']["code"])
 		else:
 			dialog.destroy()
 		
@@ -649,14 +649,14 @@ class HolidayBox(Gtk.Box):
 				orig=dialog.get_filename()
 				dialog.destroy()
 				result=self.n4d_holiday.import_holiday_list(self.credentials,'HolidayListManager',orig)
-				if result['status']:
+				if result['status']==0:
 					self.get_holidaylist()
 				else:
 					error=True	
 			else:
 				dialog.destroy()		
 				
-			self.manage_message(error,result["code"])	
+			self.manage_message(error,result['return']["code"])	
 
 	#def import_daylist_clicked			
 

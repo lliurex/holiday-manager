@@ -1,0 +1,51 @@
+{
+    "SETUP": {
+        "type": "python",
+        "path": "HolidayListManager.py",
+        "class": "HolidayListManager"
+    },
+    "METHODS": {
+        "read_conf": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"teachers"
+            ]
+        },
+        "add_day": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"teachers"
+            ]
+        },
+        "delete_day": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"teachers"
+            ]
+        },
+        "reset_holiday_list": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"teachers"
+            ]
+        },
+        "import_holiday_list": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"teachers"
+            ]
+        },
+        "export_holiday_list": {
+            "allowed_groups": [
+                "sudo",
+                "admins"
+		"teachers"
+            ]
+        }
+    }
+}
