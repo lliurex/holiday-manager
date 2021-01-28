@@ -18,92 +18,57 @@ class HolidayListManager:
 
 	def read_conf(self):
 		
-		result={}
 		ret=self.holidayListManager.read_conf()
-		result["code"]=ret["code"]
-		result["info"]=ret["info"]
 		
-		if ret["status"]:
-			return n4d.responses.build_successful_call_response(result)
-		else:
-			return n4d.responses.build_failed_call_response(result)
+		return n4d.responses.build_successful_call_response(ret)
 
 
 	#def read_conf	
 
 	def add_day(self,day,comment):
 		
-		result={}
 		ret=self.holidayListManager.add_day(day,comment)
-		result["code"]=ret["code"]
-		result["info"]=ret["info"]
 		
-		if ret["status"]:
-			return n4d.responses.build_successful_call_response(result)
-		else:
-			return n4d.responses.build_failed_call_response(result)
+		return n4d.responses.build_successful_call_response(ret)
 
 	#def add_day	
 
 	
 	def delete_day(self,day):
 		
-		result={}
 		ret=self.holidayListManager.delete_day(day)
-		result["code"]=ret["code"]
-		result["info"]=ret["info"]
 		
-		if ret["status"]:
-			return n4d.responses.build_successful_call_response(result)
-		else:
-			return n4d.responses.build_failed_call_response(result)
+		return n4d.responses.build_successful_call_response(ret)
 		
 
 	#def delete_day
 
 	def reset_holiday_list(self):
 		
-		result={}
 		ret=self.holidayListManager.reset_holiday_list()
-		result["code"]=ret["code"]
-		result["info"]=ret["info"]
 		
-		if ret["status"]:
-			return n4d.responses.build_successful_call_response(result)
-		else:
-			return n4d.responses.build_failed_call_response(result)
+		return n4d.responses.build_successful_call_response(ret)
 	
 	#def reset_holiday_list
 
 	def import_holiday_list(self,orig_path):
 		
-		result={}
 		ret=self.holidayListManager.import_holiday_list(orig_path)
-		result["code"]=ret["code"]
-		result["info"]=ret["info"]
 		
-		if ret["status"]:
-			return n4d.responses.build_successful_call_response(result)
-		else:
-			return n4d.responses.build_failed_call_response(result)
+		return n4d.responses.build_successful_call_response(ret)
 			
-
 
 	#def import_holiday_list	
 
 	def export_holiday_list(self,user,dest_path):
 
-		result={}
 		ret=self.holidayListManager.export_holiday_list(dest_path)	
-		result["code"]=ret["code"]
-		result["info"]=ret["info"]
 
 		if ret['status']:
 			cmd='chown -R '+user+":nogroup " + dest_path
 			os.system(cmd)
-			return n4d.responses.build_successful_call_response(result)
-		else:
-			return n4d.responses.build_failed_call_response(result)
+		
+		return n4d.responses.build_successful_call_response(ret)
 
 		
 	#def export_holiday_list 	

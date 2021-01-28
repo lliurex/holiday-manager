@@ -12,6 +12,19 @@ import copy
 
 class HolidayManager(object):
 
+	LIST_BLOCK_ERROR=-1
+	WRITE_LIST_ERROR=-3
+	READ_LIST_ERROR=-5
+	IMPORT_BLOCK_ERROR=-7
+	IMPORT_PROCESS_ERROR=-8
+	IMPORT_FILE_EXITS_ERROR=-9
+	EXPORT_PROCESS_ERROR=-11
+
+	WRITE_LIST_SUCCESSFUL=2
+	READ_LIST_SUCCESSFUL=4
+	IMPORT_PROCESS_SUCESSFUL=6
+	EXPORT_PROCESS_SUCCESSFUL=10
+
 	def __init__(self):
 
 		super(HolidayManager, self).__init__()
@@ -47,21 +60,16 @@ class HolidayManager(object):
 
 	def read_conf(self):
 		
-		'''
-			code=4: Read file correctly
-			code=5: Error in read file
-
-		'''
 		if not os.path.exists(self.config_file):
 			self._create_conf(self.config_dir,self.config_file)
 
 		try:
 			f=open(self.config_file)
 			self.holiday_list=json.load(f)
-			return {"status":True,"code":4,"info":self.holiday_list}
+			return {"status":True,"code":HolidayManager.READ_LIST_SUCCESSFUL,"info":self.holiday_list}
 		except Exception as e:	
 			self._debug("Read configuration file: ",str(e))
-			return {"status":False,"code":5,"info":self.holiday_list}
+			return {"status":False,"code":HolidayManager.READ_LIST_ERROR,"info":self.holiday_list}
 
 		f.close()	
 
@@ -70,24 +78,18 @@ class HolidayManager(object):
 
 	def _write_conf(self,info):
 		
-		'''
-			code=1: Block for another user
-			code=2: Correcty write
-			code=3: error when write a holiday_list
-
-		'''
 		if os.path.exists(self.block_file):
-			return {"status":False,"code":1,"info":""}
+			return {"status":False,"code":HolidayManager.LIST_BLOCK_ERROR,"info":""}
 		else:
 			self._create_conf(self.config_dir,self.block_file)
 			try:	
 				with codecs.open(self.block_file,'w',encoding="utf-8") as f:
 					json.dump(info,f,ensure_ascii=False)
 					f.close()	
-					return {"status":True,"code":2,"info":""}
+					return {"status":True,"code":HolidayManager.WRITE_LIST_SUCCESSFUL,"info":""}
 			except Exception as e:
 				self._debug("Write configuration file: ",str(e))
-				return {"status":False,"code":3,"info":str(e)}
+				return {"status":False,"code":HolidayManager.WRITE_LIST_ERROR,"info":str(e)}
 
 
 	#def _write_conf	
@@ -216,12 +218,7 @@ class HolidayManager(object):
 
 	def import_holiday_list(self,orig_path):
 		
-		'''
-			code=6: Import correctly
-			code=7: Block for another user
-			code=8: Error in import
-			code=9: Orig file not exits
-		'''
+
 		if os.path.exists(orig_path):
 			try:
 				f=open(orig_path)
@@ -229,16 +226,16 @@ class HolidayManager(object):
 				if not os.path.exists(self.block_file):
 					shutil.copyfile(orig_path,self.config_file)
 					f.close()
-					return {"status":True,"code":6,"info":""}
+					return {"status":True,"code":HolidayManager.IMPORT_PROCESS_SUCESSFUL,"info":""}
 				else:
-					return {"status":False,"code":7,"info":""}
+					return {"status":False,"code":HolidayManager.IMPORT_BLOCK_ERROR,"info":""}
 	
 			except Exception as e:
 				self._debug("Import holiday list: ",str(e))
-				return {"status":False,"code":8,"info":str(e)}
+				return {"status":False,"code":HolidayManager.IMPORT_PROCESS_ERROR,"info":str(e)}
 
 
-		return {"status":False,"code":9,"info":""}
+		return {"status":False,"code":HolidayManager.IMPORT_FILE_EXITS_ERROR,"info":""}
 		
 	
 	#def import_holiday_list
@@ -246,20 +243,15 @@ class HolidayManager(object):
 	
 	def export_holiday_list(self,dest_path):
 
-		'''
-			code=10: Export correcty
-			code=11: Error in export
-		'''
-
 		try:
 			if os.path.exists(self.config_file):
 				shutil.copy2(self.config_file,dest_path)
 				
-				return {"status":True,"code":10,"info":""}
+				return {"status":True,"code":HolidayManager.EXPORT_PROCESS_SUCCESSFUL,"info":""}
 
 		except Exception as e:		
 			self._debug("Export holiday list: ",str(e))
-			return {"status":False,"code":11,"info":str(e)}
+			return {"status":False,"code":HolidayManager.EXPORT_PROCESS_ERROR,"info":str(e)}
 
 			
 

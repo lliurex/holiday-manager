@@ -21,6 +21,11 @@ from datetime import datetime, date,timedelta
 
 class HolidayBox(Gtk.Box):
 
+	DATE_RANGE_INCONSISTENT_ERROR=-12
+	DATE_RANGE_INCOMPLETE_ERROR=-13
+	DATE_EMPTY_ERROR=-14
+
+
 	def __init__(self,app_name):
 		
 		Gtk.Box.__init__(self)
@@ -229,9 +234,9 @@ class HolidayBox(Gtk.Box):
 
 	def get_holidaylist(self):
 
-		result=self.n4d_holiday.read_conf(self.credentials,'HolidayListManager')
+		result=self.n4d_holiday.read_conf(self.credentials,'HolidayListManager')['return']
 
-		holiday_list=result['return']["info"]
+		holiday_list=result["info"]
 		list_days=self.order_date(holiday_list)
 		self.listdays_store.clear()
 		color_palette=['LightGreen','bisque']
@@ -394,7 +399,7 @@ class HolidayBox(Gtk.Box):
 							self.edit_message_label.set_text("")
 						else:
 							self.holiday_calendar.select_day(0)
-							self.manage_message(True,12)	
+							self.manage_message(True,HolidayBox.DATE_RANGE_INCONSISTENT_ERROR)	
 	#def day_selected						
 
 	
@@ -489,7 +494,7 @@ class HolidayBox(Gtk.Box):
 		result={}
 		result["status"]=True
 		error=False
-		edit_error_range_codes=[1,12,13,14]
+		
 		if self.range:
 			day1=self.range_day1_entry.get_text()
 			day2=self.range_day2_entry.get_text()
@@ -502,19 +507,19 @@ class HolidayBox(Gtk.Box):
 
 		if self.range and (day1=="" or day2=="") :
 			error=True
-			code=13
+			code=HolidayBox.DATE_RANGE_INCOMPLETE_ERROR
 		else:	
 			if new_day!="":
 				if self.edit_day:
 					if self.day!="" and self.day!=new_day:
-						result=self.n4d_holiday.delete_day(self.credentials,"HolidayListManager",self.day)
-						code=result['return']["code"]
+						result=self.n4d_holiday.delete_day(self.credentials,"HolidayListManager",self.day)['return']
+						code=result["code"]
 					
-				if result["status"]==0:			
+				if result["status"]:			
 					#result=self.holidayManager.add_day(new_day,comment)
-					result=self.n4d_holiday.add_day(self.credentials,'HolidayListManager',new_day,comment)
-					code=result['return']["code"]
-					if result["status"]==0:
+					result=self.n4d_holiday.add_day(self.credentials,'HolidayListManager',new_day,comment)['return']
+					code=result["code"]
+					if result["status"]:
 						self.get_holidaylist()
 						self.init_calendar()
 
@@ -524,7 +529,7 @@ class HolidayBox(Gtk.Box):
 					error=True	
 			else:
 				error=True	
-				code=14	
+				code=HolidayBox.DATE_EMPTY_ERROR	
 
 		if error:	
 			self.manage_message(error,code)	
@@ -576,14 +581,14 @@ class HolidayBox(Gtk.Box):
 		response=dialog.run()
 		dialog.destroy()
 		if response == Gtk.ResponseType.YES:	
-			result=self.n4d_holiday.delete_day(self.credentials,'HolidayListManager',self.day)
-			if result['status']==0:
+			result=self.n4d_holiday.delete_day(self.credentials,'HolidayListManager',self.day)['return']
+			if result['status']:
 				self.get_holidaylist()
 				self.init_calendar()
 			else:
 				error=True
 
-			self.manage_message(error,result['return']['code'])	
+			self.manage_message(error,result['code'])	
 
 	#def remove_day_clicked		
 
@@ -596,15 +601,15 @@ class HolidayBox(Gtk.Box):
 		response=dialog.run()
 		dialog.destroy()
 		if response == Gtk.ResponseType.YES:	
-			result=self.n4d_holiday.reset_holiday_list(self.credentials,'HolidayListManager')
+			result=self.n4d_holiday.reset_holiday_list(self.credentials,'HolidayListManager')['return']
 
-			if result['status']==0:
+			if result['status']:
 				self.get_holidaylist()
 				self.init_calendar()
 			else:
 				error=True
 
-			self.manage_message(error,result['return']['code'])
+			self.manage_message(error,result['code'])
 
 	#def remove_daylist_clicked		
 
@@ -621,11 +626,11 @@ class HolidayBox(Gtk.Box):
 		if response == Gtk.ResponseType.OK:
 			dest=dialog.get_filename()
 			dialog.destroy()
-			result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)
-			if result["status"]!=0:
+			result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)['return']
+			if not result["status"]:
 				error=True
 
-			self.manage_message(error,result['return']["code"])
+			self.manage_message(error,result["code"])
 		else:
 			dialog.destroy()
 		
@@ -648,22 +653,22 @@ class HolidayBox(Gtk.Box):
 			if response == Gtk.ResponseType.OK:
 				orig=dialog.get_filename()
 				dialog.destroy()
-				result=self.n4d_holiday.import_holiday_list(self.credentials,'HolidayListManager',orig)
-				if result['status']==0:
+				result=self.n4d_holiday.import_holiday_list(self.credentials,'HolidayListManager',orig)['return']
+				if result['status']:
 					self.get_holidaylist()
 				else:
 					error=True	
 			else:
 				dialog.destroy()		
 				
-			self.manage_message(error,result['return']["code"])	
+			self.manage_message(error,result["code"])	
 
 	#def import_daylist_clicked			
 
 	def manage_message(self,error,code):
 
 		msg=self.get_msg(code)
-		edit_date_errors=[1,2,3,12,13,14]
+		edit_date_errors=[-1,-2,-3,-12,-13,-14]
 
 		if error:
 			if code in edit_date_errors:
@@ -684,29 +689,29 @@ class HolidayBox(Gtk.Box):
 
 	def get_msg(self,code):	
 
-		if 	code==1:
+		if 	code==-1:
 			msg_text=_("Unabled to apply changes. List blocked for other user")
 		elif code==2:
 			msg_text=_("Changes apply succesfully")
-		elif code==3:
+		elif code==-3:
 			msg_text=_("Error saving changes")
 		elif code==6:
 			msg_text=_("List of dates imported successfully")
-		elif code==7:	
+		elif code==-7:	
 			msg_text=_("Unabled to import list. List blocked for other user")
-		elif code==8:
+		elif code==-8:
 			msg_text=_("Error importing the list of dates")
-		elif code==9:
+		elif code==-9:
 			msg_text=_("The list of dates to be imported does not exist")
 		elif code==10:
 			msg_text=_("List of dates exported successfully")
-		elif code==11:
+		elif code==-11:
 			msg_text=_("Error exporting the list of dates")			
-		elif code==12:
+		elif code==-12:
 			msg_text=_("Last date in range must be major than init date")	
-		elif code==13:
+		elif code==-13:
 			msg_text=_("You must indicate the two dates of range")	
-		elif code==14:
+		elif code==-14:
 			msg_text=_("You must indicate the date")	
 
 		return(msg_text)	
