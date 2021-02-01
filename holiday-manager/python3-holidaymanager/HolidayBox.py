@@ -14,9 +14,8 @@ _ = gettext.gettext
 
 import signal
 import os
-import xmlrpc.client as n4dclient
-import ssl
 from datetime import datetime, date,timedelta
+import n4d.client
 
 
 class HolidayBox(Gtk.Box):
@@ -30,15 +29,34 @@ class HolidayBox(Gtk.Box):
 		
 		Gtk.Box.__init__(self)
 
-		self.credentials=[]
-		server='localhost'
+		#self.credentials=[]
+		self.server='localhost'
+		'''
 		context=ssl._create_unverified_context()
 		self.n4d_holiday = n4dclient.ServerProxy("https://"+server+":9779",context=context,allow_none=True)
+		'''
 		self.app_name=app_name
 		self.holidayManager=HolidayManager.HolidayManager()
+		#self.create_n4dClient(server)
 		self.render_form()
 
 	#def __init__
+
+	def create_n4dClient(self,credentials):
+
+		self.credentials=credentials
+
+		try:
+			self.client=n4d.client.Client("https://%s:9779"%self.server,self.credentials)
+			t=self.client.get_ticket()
+		
+			if t.valid():
+				self.client=n4d.client.Client(ticket=t)
+		
+		except Exception as e:
+			print(str(e))
+			pass
+					
 
 	def render_form(self):
 	
@@ -234,7 +252,8 @@ class HolidayBox(Gtk.Box):
 
 	def get_holidaylist(self):
 
-		result=self.n4d_holiday.read_conf(self.credentials,'HolidayListManager')['return']
+		#Old n4d:result=self.n4d_holiday.read_conf(self.credentials,'HolidayListManager')['return']
+		result=self.client.HolidayListManager.read_conf()
 
 		holiday_list=result["info"]
 		list_days=self.order_date(holiday_list)
@@ -512,12 +531,14 @@ class HolidayBox(Gtk.Box):
 			if new_day!="":
 				if self.edit_day:
 					if self.day!="" and self.day!=new_day:
-						result=self.n4d_holiday.delete_day(self.credentials,"HolidayListManager",self.day)['return']
+						#Old n4d: result=self.n4d_holiday.delete_day(self.credentials,"HolidayListManager",self.day)['return']
+						result=self.client.HolidayListManager.delete_day(self.day)
 						code=result["code"]
 					
 				if result["status"]:			
 					#result=self.holidayManager.add_day(new_day,comment)
-					result=self.n4d_holiday.add_day(self.credentials,'HolidayListManager',new_day,comment)['return']
+					#Old n4d: result=self.n4d_holiday.add_day(self.credentials,'HolidayListManager',new_day,comment)['return']
+					result=self.client.HolidayListManager.add_day(new_day,comment)					
 					code=result["code"]
 					if result["status"]:
 						self.get_holidaylist()
@@ -581,7 +602,9 @@ class HolidayBox(Gtk.Box):
 		response=dialog.run()
 		dialog.destroy()
 		if response == Gtk.ResponseType.YES:	
-			result=self.n4d_holiday.delete_day(self.credentials,'HolidayListManager',self.day)['return']
+			#Old n4d: result=self.n4d_holiday.delete_day(self.credentials,'HolidayListManager',self.day)['return']
+			result=self.client.HolidayListManager.delete_day(self.day)
+	
 			if result['status']:
 				self.get_holidaylist()
 				self.init_calendar()
@@ -601,7 +624,8 @@ class HolidayBox(Gtk.Box):
 		response=dialog.run()
 		dialog.destroy()
 		if response == Gtk.ResponseType.YES:	
-			result=self.n4d_holiday.reset_holiday_list(self.credentials,'HolidayListManager')['return']
+			#Old n4d: result=self.n4d_holiday.reset_holiday_list(self.credentials,'HolidayListManager')['return']
+			result=self.client.HolidayListManager.reset_holiday_list()
 
 			if result['status']:
 				self.get_holidaylist()
@@ -626,7 +650,9 @@ class HolidayBox(Gtk.Box):
 		if response == Gtk.ResponseType.OK:
 			dest=dialog.get_filename()
 			dialog.destroy()
-			result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)['return']
+			#Old n4d: result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)['return']
+			result=self.client.HolidayListManager.export_holiday_list(self.credentials[0],dest)
+
 			if not result["status"]:
 				error=True
 
@@ -653,7 +679,9 @@ class HolidayBox(Gtk.Box):
 			if response == Gtk.ResponseType.OK:
 				orig=dialog.get_filename()
 				dialog.destroy()
-				result=self.n4d_holiday.import_holiday_list(self.credentials,'HolidayListManager',orig)['return']
+				#Old n4d: result=self.n4d_holiday.import_holiday_list(self.credentials,'HolidayListManager',orig)['return']
+				result=self.client.HolidayListManager.import_holiday_list(orig)
+
 				if result['status']:
 					self.get_holidaylist()
 				else:
@@ -668,7 +696,7 @@ class HolidayBox(Gtk.Box):
 	def manage_message(self,error,code):
 
 		msg=self.get_msg(code)
-		edit_date_errors=[-1,-2,-3,-12,-13,-14]
+		edit_date_errors=[self.holidayManager.LIST_BLOCK_ERROR,self.holidayManager.WRITE_LIST_ERROR,HolidayBox.DATE_RANGE_INCONSISTENT_ERROR,HolidayBox.DATE_RANGE_INCOMPLETE_ERROR,HolidayBox.DATE_EMPTY_ERROR]
 
 		if error:
 			if code in edit_date_errors:
