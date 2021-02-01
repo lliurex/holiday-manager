@@ -47,7 +47,7 @@ class HolidayBox(Gtk.Box):
 		self.credentials=credentials
 
 		try:
-			self.client=n4d.client.Client("https://%s:9779"%self.server,self.credentials)
+			self.client=n4d.client.Client("https://%s:9779"%self.server,self.credentials[0],self.credentials[1])
 			t=self.client.get_ticket()
 		
 			if t.valid():
