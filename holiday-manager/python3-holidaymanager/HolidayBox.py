@@ -29,33 +29,21 @@ class HolidayBox(Gtk.Box):
 		
 		Gtk.Box.__init__(self)
 
-		#self.credentials=[]
-		self.server='localhost'
 		'''
 		context=ssl._create_unverified_context()
 		self.n4d_holiday = n4dclient.ServerProxy("https://"+server+":9779",context=context,allow_none=True)
 		'''
 		self.app_name=app_name
 		self.holidayManager=HolidayManager.HolidayManager()
-		#self.create_n4dClient(server)
 		self.render_form()
 
 	#def __init__
 
-	def create_n4dClient(self,credentials):
+	def create_n4dClient(self,ticket):
 
-		self.credentials=credentials
-
-		try:
-			self.client=n4d.client.Client("https://%s:9779"%self.server,self.credentials[0],self.credentials[1])
-			t=self.client.get_ticket()
-		
-			if t.valid():
-				self.client=n4d.client.Client(ticket=t)
-		
-		except Exception as e:
-			print(str(e))
-			pass
+		ticket=ticket.replace('##U+0020##',' ')
+		tk=n4d.client.Ticket(ticket)
+		self.client=n4d.client.Client(ticket=tk)
 					
 
 	def render_form(self):
