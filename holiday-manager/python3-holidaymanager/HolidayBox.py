@@ -70,6 +70,8 @@ class HolidayBox(Gtk.Box):
 		self.comment_separator=builder.get_object("comment_separator")
 		self.coment_day_entry=builder.get_object("day_comment_entry")
 		self.add_day_button=builder.get_object("add_day_button")
+		self.message_box=builder.get_object("message_box")
+		self.edit_error_img=builder.get_object("edit_error_img")
 		self.edit_message_label=builder.get_object("edit_message_label")
 		self.save_day_button=builder.get_object("save_day_button")
 		self.cancel_day_button=builder.get_object("cancel_day_button")
@@ -123,11 +125,17 @@ class HolidayBox(Gtk.Box):
 		self.export_daylist_button=builder.get_object("export_daylist_button")
 		self.import_daylist_button=builder.get_object("import_daylist_button")
 		self.remove_daylist_button=builder.get_object("remove_daylist_button")
+		self.calendar_message_box=builder.get_object("calendar_message_box")
+		self.calendar_ok_img=builder.get_object("calendar_ok_img")
+		self.calendar_error_img=builder.get_object("calendar_error_img")
 		self.calendar_message=builder.get_object("calendar_message")
 
 		self.pack_start(self.main_box,True,True,0)
 		self.set_css_info()
 		self.connect_signals()
+		self.calendar_ok_img.hide()
+		self.calendar_error_img.hide()
+		self.edit_error_img.hide()
 		self.edit_data_window.hide()
 		self.init_calendar()
 		#self.clear_days=True
@@ -188,7 +196,7 @@ class HolidayBox(Gtk.Box):
 		gettext.textdomain(settings.TEXT_DOMAIN)
 		self.init_calendar()
 		self.get_holidaylist()
-		self.calendar_message.set_text("")
+		self.hide_calendar_message_items()
 
 	#def _start_api_connect	
 
@@ -229,12 +237,14 @@ class HolidayBox(Gtk.Box):
 				self.range_day1_entry.set_text("")
 				self.range_day2_entry.set_text("")
 				self.remove_range_button.set_sensitive(False)
+				self.hide_edit_message_items()
 
 			else:
 				self.holiday_calendar.select_day(0)
 				self.range=True
 				self.remove_range_button.set_sensitive(True)
 				self.single_day_entry.set_text("")
+				self.hide_edit_message_items()
 	
 	#def day_toggled_button
 
@@ -312,7 +322,7 @@ class HolidayBox(Gtk.Box):
 	def day_clicked(self,x,event):	
 
 		self.init_calendar()
-		self.calendar_message.set_text("")
+		self.hide_calendar_message_items()
 		self.clear_days=True
 		selection=self.listdays_tv.get_selection()
 		model,iter=selection.get_selected()
@@ -403,7 +413,7 @@ class HolidayBox(Gtk.Box):
 							range_day=self.range_day1_entry.get_text()+"-"+self.range_day2_entry.get_text()
 							self.marked_range_days(2,range_day)
 							self.holiday_calendar.select_day(0)
-							self.edit_message_label.set_text("")
+							self.hide_edit_message_items()
 						else:
 							self.holiday_calendar.select_day(0)
 							self.manage_message(True,HolidayBox.DATE_RANGE_INCONSISTENT_ERROR)	
@@ -480,7 +490,7 @@ class HolidayBox(Gtk.Box):
 		self.holiday_calendar.select_day(0)
 		self.range_day1_entry.set_text("")
 		self.range_day2_entry.set_text("")
-		self.edit_message_label.set_text("")
+		self.hide_edit_message_items()
 
 	#def remove_range	
 
@@ -488,8 +498,8 @@ class HolidayBox(Gtk.Box):
 	def add_day_clicked(self,widget):
 	
 		self.init_calendar()
-		self.edit_message_label.set_text("")
-		self.calendar_message.set_text("")
+		self.hide_edit_message_items()
+		self.hide_calendar_message_items()
 		self.edit_data_window.set_title(_("Add date"))
 		self.edit_data_window.show()
 
@@ -574,7 +584,7 @@ class HolidayBox(Gtk.Box):
 			
 		self.marked_range_days(1,self.day)
 		self.coment_day_entry.set_text(self.coment_day)
-		self.edit_message_label.set_text("")
+		self.hide_edit_message_items()
 		self.edit_data_window.set_title(_("Edit date"))
 		self.edit_data_window.show()
 
@@ -688,20 +698,44 @@ class HolidayBox(Gtk.Box):
 
 		if error:
 			if code in edit_date_errors:
-				self.edit_message_label.set_name("MSG_ERROR_LABEL")
+				#self.edit_message_label.set_name("MSG_ERROR_LABEL")
+				self.edit_error_img.show()
+				self.message_box.set_name("ERROR_BOX")
 				self.edit_message_label.set_text(msg)
 				self.edit_message_label.show()
 			else:
-				self.calendar_message.set_name("MSG_ERROR_LABEL")	
+				#self.calendar_message.set_name("MSG_ERROR_LABEL")	
+				self.calendar_message_box.set_name("ERROR_BOX")
+				self.calendar_error_img.show()
+				self.calendar_ok_img.hide()
 				self.calendar_message.set_text(msg)
 				self.calendar_message.show()	
 		else:
-			self.calendar_message.set_name("MSG_CORRECT_LABEL")	
+			#self.calendar_message.set_name("MSG_CORRECT_LABEL")	
+			self.calendar_message_box.set_name("SUCCESS_BOX")
+			self.calendar_ok_img.show()
+			self.calendar_error_img.hide()
 			self.calendar_message.set_text(msg)
 			self.calendar_message.show()
 
-	#def manage_message		
+	#def manage_message	
 
+	def hide_edit_message_items(self):
+
+		self.message_box.set_name("HIDE_BOX")
+		self.edit_error_img.hide()
+		self.edit_message_label.set_text("")
+
+	#def hide_edit_message_items
+
+	def hide_calendar_message_items(self):
+
+		self.calendar_message_box.set_name("HIDE_BOX")
+		self.calendar_error_img.hide()
+		self.calendar_ok_img.hide()
+		self.calendar_message.set_text("")		
+
+	#def hide_calendar_message_items
 
 	def get_msg(self,code):	
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
   <object class="GtkWindow" id="edit_data_window">
@@ -9,7 +9,7 @@
     <property name="modal">True</property>
     <property name="window_position">center</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
@@ -342,16 +342,34 @@
             <property name="margin_left">10</property>
             <property name="margin_right">10</property>
             <property name="margin_top">10</property>
-            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="edit_message_label">
+              <object class="GtkImage" id="edit_error_img">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="valign">center</property>
+                <property name="margin_left">10</property>
+                <property name="margin_right">10</property>
+                <property name="pixbuf">dialog-error.png</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="edit_message_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="valign">center</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -584,16 +602,22 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="messatge_box">
+      <object class="GtkBox" id="calendar_message_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <property name="margin_left">10</property>
+        <property name="margin_right">10</property>
         <property name="margin_top">5</property>
         <property name="margin_bottom">5</property>
         <child>
-          <object class="GtkLabel" id="calendar_message">
+          <object class="GtkImage" id="calendar_ok_img">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="valign">center</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="pixbuf">dialog-positive.png</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -601,10 +625,39 @@
             <property name="position">0</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkImage" id="calendar_error_img">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="valign">center</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="pixbuf">dialog-error.png</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="calendar_message">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_right">10</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
       </object>
       <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
+        <property name="expand">True</property>
+        <property name="fill">False</property>
         <property name="position">2</property>
       </packing>
     </child>
