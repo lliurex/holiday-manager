@@ -18,10 +18,10 @@ GtkCalendar#CALENDAR:active, GtkCalendar#CALENDAR:active:focus, GtkCalendar#CALE
 #CUSTOM-ENTRY
 	{
 		color: @default-grey;
-		border: none;
+		border:1px solid #aaaaaa;
 		/*border-radius: 5px;*/
 		/*background-color: @arc-blue;*/
-		border-bottom: 1px solid #aaaaaa;
+		/*border-bottom: 1px solid #aaaaaa;*/
 		padding: 4px;
 		/*background: #eeeeee;*/
 		
@@ -32,7 +32,8 @@ GtkCalendar#CALENDAR:active, GtkCalendar#CALENDAR:active:focus, GtkCalendar#CALE
 	#CUSTOM-ENTRY:focus
 	{
 		color: @arc-blue;
-		border-bottom: 1px solid @arc-blue-light;
+		border:1px solid @arc-blue-light;
+		/*border-bottom: 1px solid @arc-blue-light;*/
 		/*border-bottom: 2px solid rgba(0,0,0,0);*/
 		/*background-color: transparent;*/
 		
@@ -46,7 +47,8 @@ GtkCalendar#CALENDAR:active, GtkCalendar#CALENDAR:active:focus, GtkCalendar#CALE
 	#CUSTOM-ENTRY:disabled
 	{
 		background-color: #bbbbbb;
-		border-bottom: 1px solid transparent;
+		border:1px solid transparent;
+			/*border-bottom: 1px solid transparent;*/
 		color: #999999;
 	}
 	
@@ -90,4 +92,63 @@ GtkCalendar#CALENDAR:active, GtkCalendar#CALENDAR:active:focus, GtkCalendar#CALE
 		border-radius: 0px;
 		border-color:transparent;
 		background:transparent;
+	}
+
+	#SEPARATOR{
+		
+		background-color: #b3b3b3;
+
+	}
+
+	#WHITE_SEPARATOR{
+		
+		background-color: #ffffff;
+
+	}
+
+	#POPOVER_OFF {
+		color: #707070;
+
+	}	
+
+	#POPOVER_ON{
+
+		color: #3366cc;
+
+	}
+
+	#POPOVER_SEPARATOR{
+
+		color: #b3b3b3;
+
+	}
+
+	#EDIT_ITEM_BUTTON {
+			border-width: 5px;
+			border-radius: 0px;
+			padding: 0px 0px;
+			box-shadow: none;
+			border-color: #4784ed;
+			
+			color: white;
+			background-image:-gtk-gradient (linear,	left top, left bottom, from (#4784ed),  to (#4784ed));
+			text-shadow: none;
+			
+	}
+		
+	#EDIT_ITEM_BUTTON:hover {
+		border-color: #7ea8f2;
+		background-image:-gtk-gradient (linear,	left top, left bottom, from (#7ea8f2),  to (#7ea8f2));
+		box-shadow: -0.5px 3px 3px #aaaaaa;
+	}
+
+
+	#DAY_NAME{
+		font: 11pt Noto Sans Regular Bold;
+	}	
+
+
+	#LIST_BACKGROUND{
+		background: #ffffff;
+
 	}
