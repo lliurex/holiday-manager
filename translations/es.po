@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-14 08:36+0200\n"
-"PO-Revision-Date: 2018-05-14 08:36+0200\n"
+"POT-Creation-Date: 2021-05-14 13:55+0200\n"
+"PO-Revision-Date: 2021-05-14 13:59+0200\n"
 "Last-Translator: lliurex <lliurex@gva.es>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -17,39 +17,48 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.3\n"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:67
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:84
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:89
 msgid "Date"
 msgstr "Fecha"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:77
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:266
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:273
 msgid "Comment"
 msgstr "Comentario"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:457
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:531
 msgid "Add date"
 msgstr "Añadir fecha"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:538
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:298
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:622
 msgid "Edit date"
 msgstr "Editar fecha"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:549
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:634
 msgid "The date will be deleted. Do you want to continue?"
 msgstr "La fecha será borrada. ¿Desea continuar?"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:569
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:657
 msgid "The current list of dates will be deleted. Do you want to continue?"
 msgstr "La lista de fechas actual será eliminada. ¿Desea continuar?"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:589
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:678
 msgid "Please choose a file to save day list"
 msgstr "Seleccione un fichero para guardar la lista de fechas"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:614
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:705
 msgid ""
 "New dates list will be loaded and replace the existing configutarion. Do you "
 "want to continue?"
@@ -58,92 +67,118 @@ msgstr ""
 "existente. ¿Desea continuar?"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:618
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:709
 msgid "Please choose a file to load dates list"
 msgstr "Seleccione un fichero para cargar la lista de fechas"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:656
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:779
 msgid "Unabled to apply changes. List blocked for other user"
 msgstr ""
 "Imposible aplicar los cambios. La lista esta bloqueada por otro usuario"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:658
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:781
 msgid "Changes apply succesfully"
 msgstr "Cambios aplicados correctamente"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:660
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:783
 msgid "Error saving changes"
 msgstr "Error guardando los cambops"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:662
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:785
 msgid "List of dates imported successfully"
 msgstr "La lista de fechas se ha importado correctamente"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:664
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:787
 msgid "Unabled to import list. List blocked for other user"
 msgstr "Imposible importar la lista. La lista esta bloqueada por otro usuario"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:666
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:789
 msgid "Error importing the list of dates"
 msgstr "Error importando la lista de fechas"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:668
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:791
 msgid "The list of dates to be imported does not exist"
 msgstr "La lista de fechas a importar no existe"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:670
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:793
 msgid "List of dates exported successfully"
 msgstr "La lista de fechas se ha exportado correctamente"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:672
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:795
 msgid "Error exporting the list of dates"
 msgstr "Error exportando la lista de fechas"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:674
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:797
 msgid "Last date in range must be major than init date"
 msgstr "La última fecha del rango debe ser mayor que la fecha inicial"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:676
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:799
 msgid "You must indicate the two dates of range"
 msgstr "Debe indicar las 2 fechas del rango"
 
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:678
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:801
 msgid "You must indicate the date"
 msgstr "Debe indicar la fecha"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:121
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:128
 msgid "Day"
 msgstr "Dia"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:151
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:157
 msgid "From"
 msgstr "Del"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:184
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:189
 msgid "to"
 msgstr "al"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:212
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:217
 msgid "Clean date range"
 msgstr "Borrar rango de fechas"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:478
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:512
 msgid "Add new date"
 msgstr "Añadir nueva fecha"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:499
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:533
 msgid "Save list of date"
 msgstr "Guardar la lista de fechas"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:520
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:554
 msgid "Load list of dates"
 msgstr "Cargar una lista de fechas"
 
 #: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:541
+#: holiday-manager/python3-holidaymanager/rsrc/holiday-manager.ui:575
 msgid "Create new date list"
 msgstr "Crear una nueva lista de fechas"
 
-#~ msgid "Delete date"
-#~ msgstr "Borrar fecha"
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:284
+msgid "Manage date"
+msgstr "Gestionar fecha"
+
+#: holiday-manager/python3-holidaymanager/HolidayBox.py:312
+msgid "Delete date"
+msgstr "Borrar fecha"
 
 #~ msgid "Apply changes"
 #~ msgstr "Aplicar cambios"
