@@ -1,3 +1,9 @@
+holiday-manager (0.2.20) focal; urgency=medium
+
+  * Added new style of list of holiday
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 14 May 2021 14:12:48 +0200
+
 holiday-manager (0.2.19) focal; urgency=medium
 
   * Fixed postinst
