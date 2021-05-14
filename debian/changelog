@@ -1,3 +1,9 @@
+holiday-manager (0.2.21) focal; urgency=medium
+
+  * Fixed function to edit date
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 14 May 2021 15:21:59 +0200
+
 holiday-manager (0.2.20) focal; urgency=medium
 
   * Added new style of list of holiday
