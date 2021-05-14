@@ -596,12 +596,13 @@ class HolidayBox(Gtk.Box):
 
 		popover=box.get_children()[0].get_children()[3].popover.hide()
 
-		self.edit_day=True
 		self.init_calendar()
 		self.hide_calendar_message_items()
 		self.clear_days=True
 		self.day=box.day
 		comment_day=box.description
+		self.edit_day=True
+	
 		if "-" in self.day:
 			self.range=True
 			self.holiday_calendar.clear_marks()

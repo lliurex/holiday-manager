@@ -50,7 +50,7 @@ class HolidayBox(Gtk.Box):
 	
 		builder=Gtk.Builder()
 		builder.set_translation_domain(settings.TEXT_DOMAIN)
-		ui_path=settings.RSRC_DIR + "/holiday-manager.ui"
+		ui_path=settings.RSRC_DIR + "/holiday-manager-table.ui"
 		builder.add_from_file(ui_path)	
 
 		self.css_file=settings.RSRC_DIR+"/holiday-manager.css"
