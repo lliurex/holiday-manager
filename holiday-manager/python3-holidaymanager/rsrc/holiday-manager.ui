@@ -458,7 +458,7 @@
                 <child>
                   <object class="GtkScrolledWindow" id="listday_scrolledwindow">
                     <property name="width_request">389</property>
-                    <property name="height_request">325</property>
+                    <property name="height_request">345</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="shadow_type">in</property>
