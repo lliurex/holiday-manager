@@ -328,8 +328,8 @@ class HolidayBox(Gtk.Box):
 		hbox.pack_end(manage_date,False,False,5)
 
 		list_separator=Gtk.Separator()
-		list_separator.set_margin_top(5)
-		list_separator.set_margin_left(20)
+		#list_separator.set_margin_top(5)
+		list_separator.set_margin_left(80)
 		list_separator.set_margin_right(20)
 
 		if count!=1:
@@ -337,7 +337,7 @@ class HolidayBox(Gtk.Box):
 		else:
 			list_separator.set_name("WHITE_SEPARATOR")	
 
-		day_vbox.pack_start(hbox,False,False,0)
+		day_vbox.pack_start(hbox,False,False,5)
 		day_vbox.pack_end(list_separator,False,False,0)
 
 		day_vbox.show_all()
