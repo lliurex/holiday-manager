@@ -1,3 +1,9 @@
+holiday-manager (0.2.23) focal; urgency=medium
+
+  * Added missing icon
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 28 May 2021 09:21:58 +0200
+
 holiday-manager (0.2.22) focal; urgency=medium
 
   * Fixed representation of the list days
