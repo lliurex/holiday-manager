@@ -1,3 +1,9 @@
+holiday-manager (0.2.24) focal; urgency=medium
+
+  * Fixed bug in export function
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 09 Nov 2021 15:58:17 +0100
+
 holiday-manager (0.2.23) focal; urgency=medium
 
   * Added missing icon
