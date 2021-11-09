@@ -179,12 +179,3 @@ msgstr "Gestionar fecha"
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:312
 msgid "Delete date"
 msgstr "Borrar fecha"
-
-#~ msgid "Apply changes"
-#~ msgstr "Aplicar cambios"
-
-#~ msgid "Dates will be deleted. Do you want to continue?"
-#~ msgstr "Las fechas serán borradas. ¿Desea continuar?"
-
-#~ msgid "Delete dates"
-#~ msgstr "Borrar fechas"

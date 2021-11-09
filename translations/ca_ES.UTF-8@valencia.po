@@ -181,6 +181,3 @@ msgstr "Gestiona la data"
 #: holiday-manager/python3-holidaymanager/HolidayBox.py:312
 msgid "Delete date"
 msgstr "Suprimeix la data"
-
-#~ msgid "Apply changes"
-#~ msgstr "Aplica els canvis"
