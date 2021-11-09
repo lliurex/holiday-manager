@@ -60,10 +60,9 @@ class HolidayListManager:
 
 	#def import_holiday_list	
 
-	def export_holiday_list(self,dest_path):
+	def export_holiday_list(self,user,dest_path):
 
 		ret=self.holidayListManager.export_holiday_list(dest_path)
-		user=os.environ["USER"]	
 		if ret['status']:
 			cmd='chown -R '+user+":nogroup " + dest_path
 			os.system(cmd)

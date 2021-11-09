@@ -648,8 +648,9 @@ class HolidayBox(Gtk.Box):
 		if response == Gtk.ResponseType.OK:
 			dest=dialog.get_filename()
 			dialog.destroy()
+			user=os.environ["USER"]
 			#Old n4d: result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)['return']
-			result=self.client.HolidayListManager.export_holiday_list(self.credentials[0],dest)
+			result=self.client.HolidayListManager.export_holiday_list(user,dest)
 
 			if not result["status"]:
 				error=True
