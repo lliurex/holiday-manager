@@ -1,3 +1,9 @@
+holiday-manager (0.1.19) bionic-updates; urgency=medium
+
+  * Backported Llx21 changes
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 18 Nov 2021 10:04:24 +0100
+
 holiday-manager (0.1.18) bionic; urgency=medium
 
   * Fixed function to check holiday.
