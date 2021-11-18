@@ -21,11 +21,6 @@ from datetime import datetime, date,timedelta
 
 class HolidayBox(Gtk.Box):
 
-	DATE_RANGE_INCONSISTENT_ERROR=-12
-	DATE_RANGE_INCOMPLETE_ERROR=-13
-	DATE_EMPTY_ERROR=-14
-
-
 	def __init__(self,app_name):
 		
 		Gtk.Box.__init__(self)
@@ -64,28 +59,64 @@ class HolidayBox(Gtk.Box):
 		self.comment_separator=builder.get_object("comment_separator")
 		self.coment_day_entry=builder.get_object("day_comment_entry")
 		self.add_day_button=builder.get_object("add_day_button")
-		self.message_box=builder.get_object("message_box")
-		self.edit_error_img=builder.get_object("edit_error_img")
 		self.edit_message_label=builder.get_object("edit_message_label")
 		self.save_day_button=builder.get_object("save_day_button")
 		self.cancel_day_button=builder.get_object("cancel_day_button")
-		
-		self.list_day_box=builder.get_object("list_day_box")
 	
+		self.listdays_tv=builder.get_object("listday_treeview")
+		self.listdays_store=Gtk.ListStore(str,str,str,str,str)
+		self.listdays_tv.set_model(self.listdays_store)
+
+
+		column=Gtk.TreeViewColumn(_("Date"))
+		cell=Gtk.CellRendererText()
+		column.pack_start(cell,True)
+		column.add_attribute(cell,"markup",0)
+		column.add_attribute(cell,"cell_background",4)
+		column.set_expand(False)
+		column.set_property("fixed-width",200)
+		self.listdays_tv.append_column(column)
+		self.listdays_tv.connect("button-release-event",self.day_clicked)
+
+		column=Gtk.TreeViewColumn(_("Comment"))
+		cell=Gtk.CellRendererText()
+		column.pack_start(cell,False)
+		column.add_attribute(cell,"markup",1)
+		column.add_attribute(cell,"cell_background",4)
+		#column.set_property("fixed-width",300)
+		column.set_expand(True)
+		self.listdays_tv.append_column(column)
+
+		column=Gtk.TreeViewColumn("")
+		cell=Gtk.CellRendererPixbuf()
+		cell.set_property("stock-size",Gtk.IconSize.BUTTON)
+		column.set_expand(False)
+		column.pack_start(cell,False)
+		column.add_attribute(cell,"icon-name",2)
+		column.add_attribute(cell,"cell_background",4)
+		column.set_property("fixed-width",50)
+		self.listdays_tv.append_column(column)
+		self.col_edit=column
+
+		column=Gtk.TreeViewColumn("")
+		cell=Gtk.CellRendererPixbuf()
+		cell.set_property("stock-size",Gtk.IconSize.BUTTON)
+		column.set_expand(False)
+		column.pack_start(cell,False)
+		column.add_attribute(cell,"icon-name",3)
+		column.add_attribute(cell,"cell_background",4)
+		column.set_property("fixed-width",50)
+		self.listdays_tv.append_column(column)
+		self.col_remove=column
+
 		self.export_daylist_button=builder.get_object("export_daylist_button")
 		self.import_daylist_button=builder.get_object("import_daylist_button")
 		self.remove_daylist_button=builder.get_object("remove_daylist_button")
-		self.calendar_message_box=builder.get_object("calendar_message_box")
-		self.calendar_ok_img=builder.get_object("calendar_ok_img")
-		self.calendar_error_img=builder.get_object("calendar_error_img")
 		self.calendar_message=builder.get_object("calendar_message")
 
 		self.pack_start(self.main_box,True,True,0)
 		self.set_css_info()
 		self.connect_signals()
-		self.calendar_ok_img.hide()
-		self.calendar_error_img.hide()
-		self.edit_error_img.hide()
 		self.edit_data_window.hide()
 		self.init_calendar()
 		#self.clear_days=True
@@ -110,7 +141,6 @@ class HolidayBox(Gtk.Box):
 		self.date_separator.set_name("HEADER_SEPARATOR")
 		self.comment_label_separator.set_name("HEADER-LABEL")
 		self.comment_separator.set_name("HEADER_SEPARATOR")
-		self.list_day_box.set_name("LIST_BACKGROUND")
 
 
 	#def set_css_info	
@@ -147,7 +177,7 @@ class HolidayBox(Gtk.Box):
 		gettext.textdomain(settings.TEXT_DOMAIN)
 		self.init_calendar()
 		self.get_holidaylist()
-		self.hide_calendar_message_items()
+		self.calendar_message.set_text("")
 
 	#def _start_api_connect	
 
@@ -188,155 +218,35 @@ class HolidayBox(Gtk.Box):
 				self.range_day1_entry.set_text("")
 				self.range_day2_entry.set_text("")
 				self.remove_range_button.set_sensitive(False)
-				self.hide_edit_message_items()
 
 			else:
 				self.holiday_calendar.select_day(0)
 				self.range=True
 				self.remove_range_button.set_sensitive(True)
 				self.single_day_entry.set_text("")
-				self.hide_edit_message_items()
 	
 	#def day_toggled_button
 
-	def init_day_list(self):
-
-		tmp=self.list_day_box.get_children()
-		for item in tmp:
-			self.list_day_box.remove(item)
-
-	#def init_day_list
-
 	def get_holidaylist(self):
 
-		self.init_day_list()
 		result=self.n4d_holiday.read_conf(self.credentials,'HolidayListManager')
 
 		holiday_list=result["info"]
 		list_days=self.order_date(holiday_list)
-		count=len(list_days)
-	
+		self.listdays_store.clear()
+		color_palette=['LightGreen','bisque']
 		for item in list_days:
+			if "-" in item:
+				bg_color=color_palette[0]
+			else:
+				bg_color=color_palette[1]	
 			date=item
 			description=holiday_list[item]["description"]
-			self.new_day_box(date,description,count)
-			count-=1
+
+			self.listdays_store.append(("<span font='Roboto bold' size='medium'>"+date+"</span>","<span font='Roboto' size='medium'>"+description+"</span>","gtk-edit","gtk-remove",bg_color))
+
 
 	#def get_holidaylist	
-	def new_day_box(self,date,description,count):
-
-		day_vbox=Gtk.VBox()
-		day_vbox.day=date
-		day_vbox.description=description
-
-		hbox=Gtk.HBox()
-
-		if "-" in date:
-			img=settings.RSRC_DIR + "/calendar_range_day.png"
-		else:
-			img=settings.RSRC_DIR +"/calendar_day.png"
-
-		image=Gtk.Image.new_from_file(img)
-		image.set_margin_left(5)
-		image.set_margin_top(5)
-		image.set_margin_bottom(5)
-		image.set_halign(Gtk.Align.CENTER)
-		image.set_valign(Gtk.Align.CENTER)
-		
-		day=Gtk.Label()
-		day.set_text(date)
-		day.set_margin_left(10)
-		day.set_margin_right(5)
-		day.set_margin_top(5)
-		day.set_margin_bottom(5)
-		day.set_width_chars(30)
-		day.set_xalign(-1)
-		day.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-		day.set_name("DAY_NAME")
-
-		day_description=Gtk.Label()
-		day_description.set_text(description)
-		day_description.set_margin_left(10)
-		day_description.set_margin_right(5)
-		day_description.set_margin_top(5)
-		day_description.set_margin_bottom(5)
-		day_description.set_width_chars(50)
-		day_description.set_xalign(-1)
-		day_description.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-		day_description.set_name("DAY_NAME")
-
-
-		manage_date=Gtk.Button()
-		manage_date_image=Gtk.Image.new_from_file(settings.RSRC_DIR + '/manage_bell.svg')
-		manage_date.add(manage_date_image)
-		manage_date.set_margin_right(15)
-		manage_date.set_halign(Gtk.Align.CENTER)
-		manage_date.set_valign(Gtk.Align.CENTER)
-		manage_date.set_name("EDIT_ITEM_BUTTON")
-		manage_date.connect("clicked",self.manage_date_options,hbox)
-		manage_date.set_tooltip_text(_("Manage date"))
-
-		popover = Gtk.Popover()
-		manage_date.popover=popover
-		vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-		edit_box=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-		edit_box.set_margin_left(10)
-		edit_box.set_margin_right(10)
-		edit_eb=Gtk.EventBox()
-		edit_eb.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
-		edit_eb.connect("button-press-event", self.edit_day_clicked,day_vbox)
-		edit_eb.connect("motion-notify-event", self.mouse_over_popover)
-		edit_eb.connect("leave-notify-event", self.mouse_exit_popover)
-		edit_label=Gtk.Label()
-		edit_label.set_text(_("Edit date"))
-		edit_eb.add(edit_label)
-		edit_eb.set_name("POPOVER_OFF")
-		edit_box.add(edit_eb)
-		
-		delete_box=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-		delete_box.set_margin_left(10)
-		delete_box.set_margin_right(10)
-		delete_eb=Gtk.EventBox()
-		delete_eb.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
-		delete_eb.connect("button-press-event", self.remove_day_clicked,day_vbox)
-		delete_eb.connect("motion-notify-event", self.mouse_over_popover)
-		delete_eb.connect("leave-notify-event", self.mouse_exit_popover)
-		delete_label=Gtk.Label()
-		delete_label.set_text(_("Delete date"))
-		delete_eb.add(delete_label)
-		delete_eb.set_name("POPOVER_OFF")
-		delete_box.add(delete_eb)
-
-		vbox.pack_start(edit_box, True, True,8)
-		vbox.pack_start(delete_box, True, True,8)
-		
-		vbox.show_all()
-		popover.add(vbox)
-		popover.set_position(Gtk.PositionType.BOTTOM)
-		popover.set_relative_to(manage_date)
-
-		hbox.pack_start(image,False,False,5)
-		hbox.pack_start(day,False,False,5)
-		hbox.pack_start(day_description,False,False,5)
-		hbox.pack_end(manage_date,False,False,5)
-
-		list_separator=Gtk.Separator()
-		#list_separator.set_margin_top(5)
-		list_separator.set_margin_left(80)
-		list_separator.set_margin_right(20)
-
-		if count!=1:
-			list_separator.set_name("SEPARATOR")
-		else:
-			list_separator.set_name("WHITE_SEPARATOR")	
-
-		day_vbox.pack_start(hbox,False,False,5)
-		day_vbox.pack_end(list_separator,False,False,0)
-
-		day_vbox.show_all()
-		self.list_day_box.pack_start(day_vbox,False,False,0)
-		self.list_day_box.queue_draw()
-		day_vbox.queue_draw()			
 
 
 	def order_date(self,listdays):
@@ -364,6 +274,53 @@ class HolidayBox(Gtk.Box):
 
 	#def order_date		
 
+
+
+	def _get_day_clicked_action(self,event):
+
+		action=''
+		row=None
+
+		if type(event)==type(Gtk.TreePath()):
+			action='edit'
+		else:
+			try:
+				row=self.listdays_tv.get_path_at_pos(int(event.x),int(event.y))
+			except Exception as e:
+				self._debug(e)
+			if row:
+				if row[1]==self.col_remove:
+					action='remove'
+				elif row[1]==self.col_edit:
+					action='edit'
+		return action
+
+	#def _get_day_clicked_action	
+
+	def day_clicked(self,x,event):	
+
+		self.init_calendar()
+		self.calendar_message.set_text("")
+		self.clear_days=True
+		selection=self.listdays_tv.get_selection()
+		model,iter=selection.get_selected()
+
+		if event!=None:
+			action=self._get_day_clicked_action(event)
+
+		self.day=model[iter][0]
+		self.day=self.day[self.day.find("<span")+39:self.day.find("</span>")]
+		#self.edit_day_button.set_sensitive(True)
+		#self.remove_day_button.set_sensitive(True)
+		self.coment_day=model[iter][1]
+		self.coment_day=self.coment_day[self.coment_day.find("<span")+34:self.coment_day.find("</span>")]
+
+		if action=="edit":
+			self.edit_day_clicked()
+		elif action=="remove":
+			self.remove_day_clicked()		
+
+	#def day_clicked	
 
 	def month_changed(self,widget):	
 
@@ -434,10 +391,10 @@ class HolidayBox(Gtk.Box):
 							range_day=self.range_day1_entry.get_text()+"-"+self.range_day2_entry.get_text()
 							self.marked_range_days(2,range_day)
 							self.holiday_calendar.select_day(0)
-							self.hide_edit_message_items()
+							self.edit_message_label.set_text("")
 						else:
 							self.holiday_calendar.select_day(0)
-							self.manage_message(True,HolidayBox.DATE_RANGE_INCONSISTENT_ERROR)	
+							self.manage_message(True,12)	
 	#def day_selected						
 
 	
@@ -511,7 +468,7 @@ class HolidayBox(Gtk.Box):
 		self.holiday_calendar.select_day(0)
 		self.range_day1_entry.set_text("")
 		self.range_day2_entry.set_text("")
-		self.hide_edit_message_items()
+		self.edit_message_label.set_text("")
 
 	#def remove_range	
 
@@ -519,8 +476,8 @@ class HolidayBox(Gtk.Box):
 	def add_day_clicked(self,widget):
 	
 		self.init_calendar()
-		self.hide_edit_message_items()
-		self.hide_calendar_message_items()
+		self.edit_message_label.set_text("")
+		self.calendar_message.set_text("")
 		self.edit_data_window.set_title(_("Add date"))
 		self.edit_data_window.show()
 
@@ -532,7 +489,7 @@ class HolidayBox(Gtk.Box):
 		result={}
 		result["status"]=True
 		error=False
-		
+		edit_error_range_codes=[1,12,13,14]
 		if self.range:
 			day1=self.range_day1_entry.get_text()
 			day2=self.range_day2_entry.get_text()
@@ -545,7 +502,7 @@ class HolidayBox(Gtk.Box):
 
 		if self.range and (day1=="" or day2=="") :
 			error=True
-			code=HolidayBox.DATE_RANGE_INCOMPLETE_ERROR
+			code=13
 		else:	
 			if new_day!="":
 				if self.edit_day:
@@ -567,7 +524,7 @@ class HolidayBox(Gtk.Box):
 					error=True	
 			else:
 				error=True	
-				code=HolidayBox.DATE_EMPTY_ERROR	
+				code=14	
 
 		if error:	
 			self.manage_message(error,code)	
@@ -583,15 +540,8 @@ class HolidayBox(Gtk.Box):
 
 	#def cancel_day_clicked			
 		
-	def edit_day_clicked(self,widget,event,box):
+	def edit_day_clicked(self):
 
-		popover=box.get_children()[0].get_children()[3].popover.hide()
-
-		self.init_calendar()
-		self.hide_calendar_message_items()
-		self.clear_days=True
-		self.day=box.day
-		comment_day=box.description
 		self.edit_day=True
 	
 		if "-" in self.day:
@@ -609,17 +559,16 @@ class HolidayBox(Gtk.Box):
 			self.single_day_entry.set_text(self.day)
 			
 		self.marked_range_days(1,self.day)
-		self.coment_day_entry.set_text(comment_day)
-		self.hide_edit_message_items()
+		self.coment_day_entry.set_text(self.coment_day)
+		self.edit_message_label.set_text("")
 		self.edit_data_window.set_title(_("Edit date"))
 		self.edit_data_window.show()
 
 	#def edit_day_clicked	
 
 
-	def remove_day_clicked(self,widget,event,box):
+	def remove_day_clicked(self):
 
-		popover=box.get_children()[0].get_children()[3].popover.hide()
 		error=False
 
 		dialog = Gtk.MessageDialog(None,0,Gtk.MessageType.WARNING, Gtk.ButtonsType.YES_NO, self.app_name)
@@ -627,9 +576,7 @@ class HolidayBox(Gtk.Box):
 		response=dialog.run()
 		dialog.destroy()
 		if response == Gtk.ResponseType.YES:	
-			day=box.day
 			result=self.n4d_holiday.delete_day(self.credentials,'HolidayListManager',self.day)
-	
 			if result['status']:
 				self.get_holidaylist()
 				self.init_calendar()
@@ -674,9 +621,7 @@ class HolidayBox(Gtk.Box):
 		if response == Gtk.ResponseType.OK:
 			dest=dialog.get_filename()
 			dialog.destroy()
-			user=os.environ["USER"]
 			result=self.n4d_holiday.export_holiday_list(self.credentials,'HolidayListManager',self.credentials[0],dest)
-
 			if not result["status"]:
 				error=True
 
@@ -704,7 +649,6 @@ class HolidayBox(Gtk.Box):
 				orig=dialog.get_filename()
 				dialog.destroy()
 				result=self.n4d_holiday.import_holiday_list(self.credentials,'HolidayListManager',orig)
-
 				if result['status']:
 					self.get_holidaylist()
 				else:
@@ -719,93 +663,54 @@ class HolidayBox(Gtk.Box):
 	def manage_message(self,error,code):
 
 		msg=self.get_msg(code)
-		edit_date_errors=[self.holidayManager.LIST_BLOCK_ERROR,self.holidayManager.WRITE_LIST_ERROR,HolidayBox.DATE_RANGE_INCONSISTENT_ERROR,HolidayBox.DATE_RANGE_INCOMPLETE_ERROR,HolidayBox.DATE_EMPTY_ERROR]
+		edit_date_errors=[1,2,3,12,13,14]
 
 		if error:
 			if code in edit_date_errors:
-				#self.edit_message_label.set_name("MSG_ERROR_LABEL")
-				self.edit_error_img.show()
-				self.message_box.set_name("ERROR_BOX")
+				self.edit_message_label.set_name("MSG_ERROR_LABEL")
 				self.edit_message_label.set_text(msg)
 				self.edit_message_label.show()
 			else:
-				#self.calendar_message.set_name("MSG_ERROR_LABEL")	
-				self.calendar_message_box.set_name("ERROR_BOX")
-				self.calendar_error_img.show()
-				self.calendar_ok_img.hide()
+				self.calendar_message.set_name("MSG_ERROR_LABEL")	
 				self.calendar_message.set_text(msg)
 				self.calendar_message.show()	
 		else:
-			#self.calendar_message.set_name("MSG_CORRECT_LABEL")	
-			self.calendar_message_box.set_name("SUCCESS_BOX")
-			self.calendar_ok_img.show()
-			self.calendar_error_img.hide()
+			self.calendar_message.set_name("MSG_CORRECT_LABEL")	
 			self.calendar_message.set_text(msg)
 			self.calendar_message.show()
 
-	#def manage_message	
+	#def manage_message		
 
-	def hide_edit_message_items(self):
-
-		self.message_box.set_name("HIDE_BOX")
-		self.edit_error_img.hide()
-		self.edit_message_label.set_text("")
-
-	#def hide_edit_message_items
-
-	def hide_calendar_message_items(self):
-
-		self.calendar_message_box.set_name("HIDE_BOX")
-		self.calendar_error_img.hide()
-		self.calendar_ok_img.hide()
-		self.calendar_message.set_text("")		
-
-	#def hide_calendar_message_items
 
 	def get_msg(self,code):	
 
-		if 	code==-1:
+		if 	code==1:
 			msg_text=_("Unabled to apply changes. List blocked for other user")
 		elif code==2:
 			msg_text=_("Changes apply succesfully")
-		elif code==-3:
+		elif code==3:
 			msg_text=_("Error saving changes")
 		elif code==6:
 			msg_text=_("List of dates imported successfully")
-		elif code==-7:	
+		elif code==7:	
 			msg_text=_("Unabled to import list. List blocked for other user")
-		elif code==-8:
+		elif code==8:
 			msg_text=_("Error importing the list of dates")
-		elif code==-9:
+		elif code==9:
 			msg_text=_("The list of dates to be imported does not exist")
 		elif code==10:
 			msg_text=_("List of dates exported successfully")
-		elif code==-11:
+		elif code==11:
 			msg_text=_("Error exporting the list of dates")			
-		elif code==-12:
+		elif code==12:
 			msg_text=_("Last date in range must be major than init date")	
-		elif code==-13:
+		elif code==13:
 			msg_text=_("You must indicate the two dates of range")	
-		elif code==-14:
+		elif code==14:
 			msg_text=_("You must indicate the date")	
 
 		return(msg_text)	
 
 	#def get_msg	
 	
-	def manage_date_options(self,button,hbox,event=None):
-		
-		self.hide_calendar_message_items()
-		button.popover.show()
-
-	#def manage_date_options	
-
-	def mouse_over_popover(self,widget,event=None):
-
-		widget.set_name("POPOVER_ON")
-
-	#def mouser_over_popover	
-
-	def mouse_exit_popover(self,widget,event=None):
-
-		widget.set_name("POPOVER_OFF")		
+	
