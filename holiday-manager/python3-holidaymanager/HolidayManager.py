@@ -2,106 +2,167 @@
 
 import os
 import sys
-import json
-import codecs
 import time
 import shutil
 from datetime import datetime, date,timedelta
 import copy
+import n4d.client
 
 
 class HolidayManager(object):
-
-	LIST_BLOCK_ERROR=-1
-	WRITE_LIST_ERROR=-3
-	READ_LIST_ERROR=-5
-	IMPORT_BLOCK_ERROR=-7
-	IMPORT_PROCESS_ERROR=-8
-	IMPORT_FILE_EXITS_ERROR=-9
-	EXPORT_PROCESS_ERROR=-11
-
-	WRITE_LIST_SUCCESSFUL=2
-	READ_LIST_SUCCESSFUL=4
-	IMPORT_PROCESS_SUCESSFUL=6
-	EXPORT_PROCESS_SUCCESSFUL=10
 
 	def __init__(self):
 
 		super(HolidayManager, self).__init__()
 
 		self.dbg=0
-		self.config_dir=os.path.expanduser("/etc/manageHolidays/")
-		self.config_file=os.path.join(self.config_dir,"holiday_list")
-		self.block_file=os.path.join(self.config_dir,"holiday_tmp")
-		self.holiday_list={}
-		#self.read_conf()
+		self.credentials=[]
+		self.server='localhost'
+		self.datesConfigData=[]
+		self._getSystemLocale()
+		self.initValues()
 
 	#def __init__
 
+	def createN4dClient(self,ticket):
+
+		ticket=ticket.replace('##U+0020##',' ')
+		tk=n4d.client.Ticket(ticket)
+		self.client=n4d.client.Client(ticket=tk)
+
+	#def create_n4dClient
 
 	def _debug(self,function,msg):
 
 		if self.dbg==1:
 			print("[MANAGE HOLIDAYS]: "+ str(function) + str(msg))
 
-	#def _debug		
+	#def _debug
 
-	def _create_conf(self,config_folder,file):
+	def _getSystemLocale(self):
 
-		if not os.path.exists(config_folder):
-			os.makedirs(config_folder)	
+		language=os.environ["LANGUAGE"]
 
-		var={}	
-		with codecs.open(file,'w',encoding="utf-8") as f:
-			json.dump(var,f,ensure_ascii=False)
-			f.close()	
-	
-	#def _create_conf		
-
-	def read_conf(self):
-		
-		if not os.path.exists(self.config_file):
-			self._create_conf(self.config_dir,self.config_file)
-
-		try:
-			f=open(self.config_file)
-			self.holiday_list=json.load(f)
-			return {"status":True,"code":HolidayManager.READ_LIST_SUCCESSFUL,"info":self.holiday_list}
-		except Exception as e:	
-			self._debug("Read configuration file: ",str(e))
-			return {"status":False,"code":HolidayManager.READ_LIST_ERROR,"info":self.holiday_list}
-
-		f.close()	
-
-	#def read_conf	
-
-
-	def _write_conf(self,info):
-		
-		if os.path.exists(self.block_file):
-			return {"status":False,"code":HolidayManager.LIST_BLOCK_ERROR,"info":""}
+		if language!="":
+			tmpLang=language.split(":")
+			self.systemLocale=tmpLang[0]
 		else:
-			self._create_conf(self.config_dir,self.block_file)
-			try:	
-				with codecs.open(self.block_file,'w',encoding="utf-8") as f:
-					json.dump(info,f,ensure_ascii=False)
-					f.close()	
-					return {"status":True,"code":HolidayManager.WRITE_LIST_SUCCESSFUL,"info":""}
-			except Exception as e:
-				self._debug("Write configuration file: ",str(e))
-				return {"status":False,"code":HolidayManager.WRITE_LIST_ERROR,"info":str(e)}
+			self.systemLocale=os.environ["LANG"]
 
+	#def _getSystemLocale
 
-	#def _write_conf	
+	def readConf(self):
+		
+		self.loadError=False
+		result=self.client.HolidayListManager.read_conf()
+		self._debug("Read configuration file: ",result)
+		self.datesConfig=result["info"]
+		self.datesConfigData=[]
+		if result["status"]:
+			self._getDatesConfig()
+		return result
 
+	#def readConf
 
+	def _getDatesConfig(self):
+
+		orderDate=self._getOrderDate()
+
+		for item in orderDate:
+			tmp={}
+			tmp["id"]=item
+			if "-" in item:
+				tmp["type"]="range"
+			else:
+				tmp["type"]="single"
+			tmp["comment"]=self.datesConfig[item]["description"]
+	
+			self.datesConfigData.append(tmp)
+
+	#def _getDatesConfig		
+
+	def _getOrderDate(self):
+
+		tmp=[]
+		orderDate=[]
+
+		if len(self.datesConfig)>0:
+			for item in self.datesConfig:
+				if "-" in item:
+					date_toformat=item.split("-")[0]
+				else:
+					date_toformat=item
+
+				datef=datetime.strptime(date_toformat,"%d/%m/%Y")
+				x=()
+				x=item,datef
+				tmp.append(x)
+
+		tmp.sort(key=lambda date:date[1])
+		for item in tmp:
+			orderDate.append(item[0])
+
+		return orderDate
+
+	#def _getOrderDate
+
+	def loadDateConfig(self,date):
+
+		self.dateToLoad=date
+		self.currentDateConfig=self.datesConfig[self.dateToLoad]
+		self.dateInfo=[self.dateToLoad,self.currentDateConfig["description"]]
+		self.daysInRange=self.getDaysInRange(self.dateToLoad)
+		self.dateRangeOption=self._checkRangeOption(self.dateToLoad)		
+
+	#def loadDateConfig
+
+	def initValues(self):
+
+		self.currentDateConfig={}
+		self.dateInfo=["",""]
+		self.dateRangeOption=True
+		self.daysInRange=[]
+
+	#def initValues
+
+	def getDaysInRange(self,day):	
+
+		listDays=[]
+		if day!="":
+			if "-" in day:
+				tmp=day.split("-")
+				date1=datetime.strptime(tmp[0],'%d/%m/%Y')
+				date2=datetime.strptime(tmp[1],'%d/%m/%Y')
+			else:
+				date1=datetime.strptime(day,'%d/%m/%Y')
+				date2=date1
+			delta=date2-date1
+			for i in range(delta.days + 1):
+				tmpDay=(date1 + timedelta(days=i)).strftime('%d/%m/%Y')
+				listDays.append(tmpDay)
+
+		return listDays	
+
+	#def getDaysInRange
+
+	def _checkRangeOption(self,date):
+
+		if date!="":
+			if "-" in date:
+				return True
+			else:
+				return False
+		return True
+
+	#def _checkRangeOption
+	
+	'''
 	def add_day(self,day,description):
 
-		'''
+		
 			Format to day arg:
 				-day="dd/mm/yyyy"
 				-interval="dd/mm/yyyy-dd/mm/yyyy"
-		'''		
 
 		info=self.holiday_list.copy()
 		info[day]={}
@@ -138,11 +199,10 @@ class HolidayManager(object):
 
 	def delete_day(self,day):
 
-		'''
+		
 			Format to day arg:
 				-day="dd/mm/yyyy"
 				-interval="dd/mm/yyyy-dd/mm/yyyy"
-		'''	
 		info=self.holiday_list.copy()
 
 		try:
@@ -255,6 +315,7 @@ class HolidayManager(object):
 
 			
 
-	#def export_holiday_list	
+	#def export_holiday_list
+	'''	
 
-#Class HolidayManager	
+#class HolidayManager	
