@@ -75,7 +75,7 @@ class HolidayManager(object):
 				tmp["type"]="range"
 			else:
 				tmp["type"]="single"
-			tmp["comment"]=self.datesConfig[item]["description"]
+			tmp["description"]=self.datesConfig[item]["description"]
 	
 			self.datesConfigData.append(tmp)
 
@@ -109,20 +109,20 @@ class HolidayManager(object):
 	def loadDateConfig(self,date):
 
 		self.dateToLoad=date
-		self.currentDateConfig=self.datesConfig[self.dateToLoad]
-		self.dateInfo=[self.dateToLoad,self.currentDateConfig["description"]]
+		self.dateRangeOption=self._checkRangeOption(self.dateToLoad)	
 		self.daysInRange=self.getDaysInRange(self.dateToLoad)
-		self.dateRangeOption=self._checkRangeOption(self.dateToLoad)		
+		self.currentDateConfig=[self.dateToLoad,self.datesConfig[self.dateToLoad]["description"]]
+		self.dateDescription=self.currentDateConfig[1]
 
 	#def loadDateConfig
 
 	def initValues(self):
 
-		self.currentDateConfig={}
-		self.dateInfo=["",""]
 		self.dateRangeOption=True
 		self.daysInRange=[]
-
+		self.currentDateConfig=[]
+		self.dateDescription=""
+		
 	#def initValues
 
 	def getDaysInRange(self,day):	
@@ -156,29 +156,27 @@ class HolidayManager(object):
 
 	#def _checkRangeOption
 	
-	'''
-	def add_day(self,day,description):
+	def addDate(self,newDate):
 
+	
+		info=self.datesConfig
+		info[newDate[0]]={}
+		info[newDate[0]]["description"]=newDate[1]
 		
-			Format to day arg:
-				-day="dd/mm/yyyy"
-				-interval="dd/mm/yyyy-dd/mm/yyyy"
-
-		info=self.holiday_list.copy()
-		info[day]={}
-		info[day]["description"]=description
-		
-		result=self._write_conf(info)
-		
-		if result["status"]:
-			shutil.move(self.block_file,self.config_file)
-			self.holiday_list=info
+		retSave=self.client.HolidayListManager.add_day(info)
+		if retSave["status"]:
+			retReadConfig=self.readConf()
+			if retReadConfig['status']:
+				return [True,retSave["code"]]
+			else:
+				return [False,retReadConfig["code"]]
+		else:
+			return [False,retSave["code"]]
 			
-		return result	
 
-	#def add_day
+	#def addDate
 
-		
+	'''	
 	def _get_interval_id(self):
 
 		interval=[]

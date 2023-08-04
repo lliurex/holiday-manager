@@ -6,9 +6,7 @@ import QtQuick.Layouts 1.15
 
 Popup {
 
-    id:editDatePopUp
-
-    signal applyButtonClicked
+    id:dateSelectorPopUp
 
     width:530
     height:580
@@ -17,11 +15,16 @@ Popup {
     focus:true
     visible:holidayStackBridge.showDateForm
     closePolicy:Popup.NoAutoClose
+    onVisibleChanged:{
+        if (visible){
+            loadInitVales()
+        }
+    }
 
     Rectangle{
         id:container
-        width:editDatePopUp.width
-        height:editDatePopUp.height
+        width:dateSelectorPopUp.width
+        height:dateSelectorPopUp.height
         color:"transparent"
         Text{ 
             text:i18nd("holiday-manager","Edit date")
@@ -114,7 +117,11 @@ Popup {
                         id:dayText 
                         text:{
                             if (!holidayStackBridge.dateRangeOption){
-                                 holidayStackBridge.daysInRange[0]
+                                if (holidayStackBridge.daysInRange.length>0){
+                                    holidayStackBridge.daysInRange[0]
+                                }else{
+                                    ""
+                                }
                             }else{
                                 ""
                             }
@@ -150,6 +157,8 @@ Popup {
                                 }else{
                                     ""
                                 }
+                            }else{
+                                ""
                             }
                         }
                         font.family: "Quattrocento Sans Bold"
@@ -169,10 +178,12 @@ Popup {
                         text:{
                            if (holidayStackBridge.dateRangeOption){
                                 if (holidayStackBridge.daysInRange.length>0){
-                                    holidayStackBridge.daysInRange[holidayStackBridge.daysInRange.length-1]
+                                    holidayStackBridge.daysInRange[ holidayStackBridge.daysInRange.length-1]
                                 }else{
                                     ""
                                 }
+                            }else{
+                                ""
                             }
                         }
                         font.family: "Quattrocento Sans Bold"
@@ -186,18 +197,18 @@ Popup {
         
                 }
                 RowLayout{
-                    id:commentRow
+                    id:descriptionRow
                     spacing:10
                     Layout.alignment:Qt.AlignLeft
                     Layout.bottomMargin:10
 
                     Text{
-                        id:commentText
+                        id:descriptionText
                         text:i18nd("holiday-manager","Description:")
                     }
                     TextField{
-                        id:commentEntry 
-                        text:holidayStackBridge.dateInfo[1]
+                        id:descriptionEntry 
+                        text:holidayStackBridge.dateDescription
                         font.family: "Quattrocento Sans Bold"
                         font.pointSize: 10
                         horizontalAlignment:TextInput.AlignHLeft
@@ -235,8 +246,7 @@ Popup {
                         }else{
                             tmpValue=dayText.text
                         }
-                        holidayStackBridge.applyDateChanges([tmpValue,rangeDate.checked,commentEntry.text])
-                        restoreInitValues()
+                        holidayStackBridge.applyDateChanges([tmpValue,descriptionEntry.text])
                     }
                 }
             }
@@ -253,9 +263,10 @@ Popup {
                 Keys.onReturnPressed: cancelBtn.clicked()
                 Keys.onEnterPressed: cancelBtn.clicked()
                 onClicked:{
-                    restoreInitValues()
                     holidayStackBridge.closeDateForm()
+
                 }
+                
             }
 
         }
@@ -296,7 +307,13 @@ Popup {
             }
         }
     }
-    function restoreInitValues(){
+
+    function loadInitVales(){
+
+        calendar.startDate=undefined
+        calendar.stopDate=undefined
+        calendar.daysInRange=holidayStackBridge.daysInRange
+        rangeDate.checked=holidayStackBridge.dateRangeOption
 
         if (holidayStackBridge.dateRangeOption){
             dayText.text=""
@@ -307,8 +324,8 @@ Popup {
                 day1Entry.text=""
                 day2Entry.text=""
             }
-            /*calendar.initDate=day1Entry.text
-            calendar.endDate=day2Entry.text*/
+            calendar.initDate=day1Entry.text
+            calendar.endDate=day2Entry.text
         }else{
             day1Entry.text=""
             day2Entry.text=""
@@ -316,11 +333,8 @@ Popup {
             calendar.initDate=dayText.text
             calendar.endDate=""
         }
-        calendar.startDate=undefined
-        calendar.stopDate=undefined
-        calendar.daysInRange=holidayStackBridge.daysInRange
-        rangeDate.checked=holidayStackBridge.dateRangeOption
-
+        descriptionEntry.text=holidayStackBridge.dateDescription
+ 
     }
 
 }

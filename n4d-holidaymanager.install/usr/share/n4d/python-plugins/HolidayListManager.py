@@ -62,23 +62,12 @@ class HolidayListManager:
 	
 	#def _create_conf		
 
-	def add_day(self,day,comment):
-		
-		'''
-			Format to day arg:
-				-day="dd/mm/yyyy"
-				-interval="dd/mm/yyyy-dd/mm/yyyy"
-		'''		
-
-		info=self.holiday_list.copy()
-		info[day]={}
-		info[day]["description"]=comment
+	def add_day(self,info):
 		
 		ret=self._write_conf(info)
 		
 		if ret["status"]:
 			shutil.move(self.block_file,self.config_file)
-			self.holiday_list=info
 			
 		return n4d.responses.build_successful_call_response(ret)
 

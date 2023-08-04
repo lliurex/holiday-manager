@@ -9,7 +9,7 @@ Components.ListItem{
     id: listDateItem
     property string dateId
     property string dateType
-    property string dateComment
+    property string dateDescription
 
     enabled:true
 
@@ -58,17 +58,17 @@ Components.ListItem{
         }
 
         Text{
-            id:commentText
-            text:dateComment
+            id:descriptionText
+            text:dateDescription
             font.family:"Quattrocento Sans Bold"
             font.pointSize: 10
             horizontalAlignment:Text.AlignLeft
             elide:Text.ElideMiddle
             width:{
                 if (listDateItem.ListView.isCurretItem){
-                    parent.width-(dateImage.width+dateText.width+manageDateBtn.width+140)
+                    parent.width-(dateImage.width+dateText.width+manageDateBtn.width+150)
                 }else{
-                  parent.width-(dateImage.width+dateText.width+140)
+                  parent.width-(dateImage.width+dateText.width+150)
                 }
             }
             anchors.left:dateText.right
@@ -81,13 +81,13 @@ Components.ListItem{
             display:AbstractButton.IconOnly
             icon.name:"configure.svg"
             anchors.leftMargin:15
-            anchors.left:commentText.right
+            anchors.left:descriptionText.right
             anchors.verticalCenter:parent.verticalCenter
             visible:listDateItem.ListView.isCurrentItem
             ToolTip.delay: 1000
             ToolTip.timeout: 3000
             ToolTip.visible: hovered
-            ToolTip.text:i18nd("holiday-manager","Click to manage this bell")
+            ToolTip.text:i18nd("holiday-manager","Click to manage this date")
             onClicked:optionsMenu.open();
             onVisibleChanged:{
                 optionsMenu.close()
@@ -101,7 +101,9 @@ Components.ListItem{
                 MenuItem{
                     icon.name:"document-edit.svg"
                     text:i18nd("holiday-manager","Edit date")
-                    onClicked:holidayStackBridge.loadDate(dateId)
+                    onClicked:{
+                        holidayStackBridge.loadDate(dateId)
+                    }
                 }
                 MenuItem{
                     icon.name:"delete.svg"

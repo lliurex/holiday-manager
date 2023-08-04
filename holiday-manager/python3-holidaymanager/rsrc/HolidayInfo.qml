@@ -133,11 +133,11 @@ Rectangle{
             }
         }
     }
-    /*
+    
     CustomPopUp{
         id:waitingForm
     }
-    */
+    
     DateSelector{
         id:dateSelector
     }

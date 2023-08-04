@@ -39,7 +39,7 @@ Rectangle {
                 width:datesTable.width
                 dateId:model.id
                 dateType:model.type
-                dateComment:model.comment
+                dateDescription:model.description
             }
             Kirigami.PlaceholderMessage { 
                 id: emptyHint
