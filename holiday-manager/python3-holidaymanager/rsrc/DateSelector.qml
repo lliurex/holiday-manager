@@ -74,6 +74,7 @@ Popup {
                 }
                 rangeDate:rangeDate.checked
                 daysInRange:holidayStackBridge.daysInRange
+                selectedDate:new Date()
                 Connections{
                     target:calendar
                     function onGetSelectedDate(info){
@@ -284,7 +285,7 @@ Popup {
                     messageLabel.text=i18nd("holiday-manager","You must indicate the two dates of range")
                     return false
                 }else{
-                    if (Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")>=Date.fromLocaleString(Qt.locale(),day2Entry.text,"dd/MM/yyyyy")){
+                    if (Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")>=Date.fromLocaleString(Qt.locale(),day2Entry.text,"dd/MM/yyyy")){
                         messageLabel.visible=true
                         messageLabel.text=i18nd("holiday-manager","Last date in range must be major than init date")
                         return false
@@ -320,9 +321,11 @@ Popup {
             if (holidayStackBridge.daysInRange.length>0){
                 day1Entry.text=holidayStackBridge.daysInRange[0]
                 day2Entry.text=holidayStackBridge.daysInRange[ holidayStackBridge.daysInRange.length-1]
+                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")
             }else{
                 day1Entry.text=""
                 day2Entry.text=""
+                calendar.selectedDate=new Date()
             }
             calendar.initDate=day1Entry.text
             calendar.endDate=day2Entry.text
@@ -332,6 +335,12 @@ Popup {
             dayText.text=holidayStackBridge.daysInRange[0]
             calendar.initDate=dayText.text
             calendar.endDate=""
+            if (dayText!=""){
+                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),dayText.text,"dd/MM/yyyy")
+            }else{
+                calendar.selectedDate=new Date()
+            }
+
         }
         descriptionEntry.text=holidayStackBridge.dateDescription
  
