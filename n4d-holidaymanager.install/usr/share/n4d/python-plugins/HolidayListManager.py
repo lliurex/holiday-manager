@@ -7,6 +7,8 @@ import json
 import codecs
 import shutil
 import copy
+from datetime import datetime, date,timedelta
+
 
 class HolidayListManager:
 
@@ -62,9 +64,13 @@ class HolidayListManager:
 	
 	#def _create_conf		
 
-	def add_day(self,info):
+	def add_day(self,newDate):
 		
-		ret=self._write_conf(info)
+		current_list=self.holiday_list.copy()
+		current_list[newDate[0]]={}
+		current_list[newDate[0]]["description"]=newDate[1]
+
+		ret=self._write_conf(current_list)
 		
 		if ret["status"]:
 			shutil.move(self.block_file,self.config_file)
@@ -143,8 +149,8 @@ class HolidayListManager:
 	
 			except Exception as e:
 				ret={"status":False,"code":HolidayListManager.IMPORT_PROCESS_ERROR,"info":str(e)}
-
-		ret={"status":False,"code":HolidayListManager.IMPORT_FILE_EXITS_ERROR,"info":""}
+		else:
+			ret={"status":False,"code":HolidayListManager.IMPORT_FILE_EXITS_ERROR,"info":""}
 		
 		return n4d.responses.build_successful_call_response(ret)
 			
@@ -168,5 +174,49 @@ class HolidayListManager:
 		
 		return n4d.responses.build_successful_call_response(ret)
 
-	#def export_holiday_list 	
+	#def export_holiday_list
+
+	def is_holiday(self,day):
+
+		holiday_days=[]
+		if os.path.exists(self.config_file):
+			ret=self.read_conf()
+			if ret['return']['status']:
+				for item in self.holiday_list:
+					tmp_list=[]
+					if "-" in item:
+						tmp_list=self._get_days_inrange(item)
+						holiday_days=holiday_days+tmp_list
+					else:
+						holiday_days.append(item)
+
+		if day in holiday_days:
+			ret={"status":True,"code":"","info":""}
+		else:
+			ret={"status":False,"code":"","info":""}
+
+		return n4d.responses.build_successful_call_response(ret)
+
+
+	#def is_holiday	
+
+	def _get_days_inrange(self,day):	
+
+		listDays=[]
+		if day!="":
+			if "-" in day:
+				tmp=day.split("-")
+				date1=datetime.strptime(tmp[0],'%d/%m/%Y')
+				date2=datetime.strptime(tmp[1],'%d/%m/%Y')
+			else:
+				date1=datetime.strptime(day,'%d/%m/%Y')
+				date2=date1
+			delta=date2-date1
+			for i in range(delta.days + 1):
+				tmpDay=(date1 + timedelta(days=i)).strftime('%d/%m/%Y')
+				listDays.append(tmpDay)
+
+		return listDays	
+
+	#def _get_days_inrange 	
 

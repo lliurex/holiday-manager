@@ -11,6 +11,13 @@ import n4d.client
 
 class HolidayManager(object):
 
+	DATES_ALREADY_REMOVED=3
+	DATE_EDITED_SUCCESSFULLY=7
+	DATE_ADDED_SUCCESSFULLY=5
+	DATE_REMOVED_SUCCESSFULLY=11
+	DATES_REMOVED_SUCCESSFULLY=12
+
+
 	def __init__(self):
 
 		super(HolidayManager, self).__init__()
@@ -19,6 +26,7 @@ class HolidayManager(object):
 		self.credentials=[]
 		self.server='localhost'
 		self.datesConfigData=[]
+		self.configFile="/etc/manageHolidays/holiday_list"
 		self._getSystemLocale()
 		self.initValues()
 
@@ -155,165 +163,100 @@ class HolidayManager(object):
 		return True
 
 	#def _checkRangeOption
-	
-	def addDate(self,newDate):
 
-	
-		info=self.datesConfig
-		info[newDate[0]]={}
-		info[newDate[0]]["description"]=newDate[1]
-		
-		retSave=self.client.HolidayListManager.add_day(info)
-		if retSave["status"]:
-			retReadConfig=self.readConf()
-			if retReadConfig['status']:
-				return [True,retSave["code"]]
-			else:
-				return [False,retReadConfig["code"]]
-		else:
-			return [False,retSave["code"]]
-			
+	def checkGlobalOptionsStatus(self):
 
-	#def addDate
-
-	'''	
-	def _get_interval_id(self):
-
-		interval=[]
-		for item in self.holiday_list:
-			if self.holiday_list[item]["intervalId"]!="":
-				interval.append(int(self.holiday_list[item]["intervalId"]))
-
-		if len(interval)>0:
-			next_intervalId=max(interval)+1
-			
-		else:
-			next_intervalId=0
-
-		return next_intervalId	
-
-	#def _get_interval_id
-
-
-	def delete_day(self,day):
-
-		
-			Format to day arg:
-				-day="dd/mm/yyyy"
-				-interval="dd/mm/yyyy-dd/mm/yyyy"
-		info=self.holiday_list.copy()
-
-		try:
-			info.pop(day)
-		except Exception as e:
-			self._debug("Delete day: ",str(e))
-		pass
-
-		result=self._write_conf(info)
-
-		if result["status"]:
-			shutil.move(self.block_file,self.config_file)
-			self.holiday_list=info
-
-		return result	
-				
-	#def delete_day			
-
-
-	def get_days_inrange(self,day):
-
-		list_days=[]
-		tmp=day.split("-")
-		date1=datetime.strptime(tmp[0],'%d/%m/%Y')
-		date2=datetime.strptime(tmp[1],'%d/%m/%Y')
-		delta=date2-date1
-		for i in range(delta.days + 1):
-			tmp_day=(date1 + timedelta(days=i)).strftime('%d/%m/%Y')
-			list_days.append(tmp_day)
-
-		return list_days	
-
-	#def get_days_inrange	
-
-	def is_holiday(self,day):
-
-		holiday_days=[]
-		if os.path.exists(self.config_file):
-			self.read_conf()
-
-			for item in self.holiday_list:
-				tmp_list=[]
-				if "-" in item:
-					tmp_list=self.get_days_inrange(item)
-					holiday_days=holiday_days+tmp_list
-				else:
-					holiday_days.append(item)
-
-
-		if day in holiday_days:
+		if len(self.datesConfig)>0:
 			return True
 		else:
 			return False
-				
 
-	#def is_holiday	
+	#def checkGlobalOptionsStatus
+	
+	def addDate(self,newDate):
 
-
-	def reset_holiday_list(self):
+		ret=True
+		action="add"
+	
+		if len(self.currentDateConfig)>0:
+			action="edit"
+			if newDate[0]!=self.currentDateConfig[0]:
+				retDelete=self.client.HolidayListManager.delete_day(self.currentDateConfig[0])
+				if not retDelete['status']:
+					ret=False
+		if ret:
+			retSave=self.client.HolidayListManager.add_day(newDate)
 		
-		info={}
-		
-		result=self._write_conf(info)
-
-		if result["status"]:
-			shutil.move(self.block_file,self.config_file)
-			self.holiday_list=info
-
-		return result	
-
-	#def reset_holiday_list	
-
-
-	def import_holiday_list(self,orig_path):
-		
-
-		if os.path.exists(orig_path):
-			try:
-				f=open(orig_path)
-				read=json.load(f)
-				if not os.path.exists(self.block_file):
-					shutil.copyfile(orig_path,self.config_file)
-					f.close()
-					return {"status":True,"code":HolidayManager.IMPORT_PROCESS_SUCESSFUL,"info":""}
+			if retSave["status"]:
+				retReadConfig=self.readConf()
+				if retReadConfig['status']:
+					if action=="edit":
+						return [True,HolidayManager.DATE_EDITED_SUCCESSFULLY]
+					else:
+						return [True,HolidayManager.DATE_ADDED_SUCCESSFULLY]
 				else:
-					return {"status":False,"code":HolidayManager.IMPORT_BLOCK_ERROR,"info":""}
-	
-			except Exception as e:
-				self._debug("Import holiday list: ",str(e))
-				return {"status":False,"code":HolidayManager.IMPORT_PROCESS_ERROR,"info":str(e)}
-
-
-		return {"status":False,"code":HolidayManager.IMPORT_FILE_EXITS_ERROR,"info":""}
-		
-	
-	#def import_holiday_list
-		
-	
-	def export_holiday_list(self,dest_path):
-
-		try:
-			if os.path.exists(self.config_file):
-				shutil.copy2(self.config_file,dest_path)
-				
-				return {"status":True,"code":HolidayManager.EXPORT_PROCESS_SUCCESSFUL,"info":""}
-
-		except Exception as e:		
-			self._debug("Export holiday list: ",str(e))
-			return {"status":False,"code":HolidayManager.EXPORT_PROCESS_ERROR,"info":str(e)}
-
+					return [False,retReadConfig["code"]]
+			else:
+				return [False,retSave["code"]]
 			
+		else:
+			return [False,retDelete["code"]]
+	
+	#def addDate
 
-	#def export_holiday_list
-	'''	
+	def removeDate(self,allDates,dateToRemove=None):
 
+		if allDates:
+			if len(self.datesConfig)>0:
+				retRemove=self.client.HolidayListManager.reset_holiday_list()
+				if retRemove['status']:
+					retReadConfig=self.readConf()
+					if retReadConfig["status"]:
+						return [True,HolidayManager.DATES_REMOVED_SUCCESSFULLY]
+					else:
+						return [False,retReadConfig["code"]]
+				else:
+					return [False, retRemove["code"]]
+			else:
+				return [True,HolidayManager.DATES_ALREADY_REMOVED]
+		else:
+			ret=self.client.HolidayListManager.delete_day(dateToRemove)
+
+			if ret["status"]:
+				retReadConfig=self.readConf()
+				if retReadConfig['status']:
+					return [True,HolidayManager.DATE_REMOVED_SUCCESSFULLY]
+				else:
+					return [False,retReadConfig["code"]]
+			else:
+				return [False,ret["code"]]
+
+	#def removeBell
+
+	def exportDatesConfig(self,destFile):
+
+		user=os.environ["USER"]
+		result=self.client.HolidayListManager.export_holiday_list(user,destFile)
+		self._debug("Export bells conf : ",result)
+
+		return result
+
+	#def exportDatesConfig
+
+	def importDatesBackup(self,origFile):
+
+		resultImport=self.client.HolidayListManager.import_holiday_list(origFile)
+
+		if resultImport['status']:
+			retReadConfig=self.readConf()
+			if retReadConfig["status"]:
+				return [True,resultImport["code"]]
+			else:
+				return [False,retReadConfig["code"]]
+		else:
+			return [False,resultImport["code"]]
+
+	#def importBellBackup
+
+	
 #class HolidayManager	

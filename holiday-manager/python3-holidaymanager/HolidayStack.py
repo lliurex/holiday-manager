@@ -13,6 +13,8 @@ from . import HolidayManager
 
 LOAD_MSG=1
 APPLY_CHANGES_MSG=2
+EXPORT_DATES_CONFIG=3
+IMPORT_DATES_CONFIG=4
 
 class LoadDate(QThread):
 
@@ -54,6 +56,64 @@ class AddDate(QThread):
 
 #class AddDate
 
+class RemoveDate(QThread):
+
+	def __init__(self,*args):
+
+		QThread.__init__(self)
+		self.allDates=args[0]
+		self.dateToRemove=args[1]
+		self.ret=[]
+
+	#def __init__
+
+	def run(self,*args):
+
+		time.sleep(0.5)
+		self.ret=Bridge.dateMan.removeDate(self.allDates,self.dateToRemove)
+
+	#def run
+
+#class RemoveBell
+
+class GenerateBackup(QThread):
+
+	def __init__(self,*args):
+
+		QThread.__init__(self)
+		self.exportPath=args[0]
+		self.ret=[]
+
+	#def __init__
+
+	def run(self,*args):
+
+		time.sleep(0.5)
+		self.ret=Bridge.dateMan.exportDatesConfig(self.exportPath)
+
+	#def run
+
+#class GenerateBackup
+
+class ImportBackup(QThread):
+
+	def __init__(self,*args):
+
+		QThread.__init__(self)
+		self.importPath=args[0]
+		self.ret=[]
+
+	#def __init__
+
+	def run(self,*args):
+
+		time.sleep(0.5)
+		self.ret=Bridge.dateMan.importDatesBackup(self.importPath)
+
+	#def run
+
+#class ImportBackup
+
 
 class Bridge(QObject):
 
@@ -68,6 +128,8 @@ class Bridge(QObject):
 		self._dateRangeOption=Bridge.dateMan.dateRangeOption
 		self._daysInRange=Bridge.dateMan.daysInRange
 		self._dateDescription=Bridge.dateMan.dateDescription
+		self._enableGlobalOptions=False
+		self._showRemoveDateDialog=[False,False]
 						
 		Bridge.dateMan.createN4dClient(sys.argv[1])
 
@@ -78,6 +140,7 @@ class Bridge(QObject):
 		ret=Bridge.dateMan.readConf()
 		if ret["status"]:
 			self._systemLocale=Bridge.dateMan.systemLocale
+			self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()			
 			self._updateHolidayModel()
 			
 		else:
@@ -189,7 +252,35 @@ class Bridge(QObject):
 			self._daysInRange=daysInRange
 			self.on_daysInRange.emit()
 
-	#def _setDaysInRange 
+	#def _setDaysInRange
+
+	def _getEnableGlobalOptions(self):
+
+		return self._enableGlobalOptions
+
+	#def _getEnableGlobalOptions
+
+	def _setEnableGlobalOptions(self,enableGlobalOptions):
+
+		if self._enableGlobalOptions!=enableGlobalOptions:
+			self._enableGlobalOptions=enableGlobalOptions
+			self.on_enableGlobalOptions.emit()
+
+	#def _setEnableGlobalOptions
+
+	def _getShowRemoveDateDialog(self):
+
+		return self._showRemoveDateDialog
+
+	#def _getShowRemoveDateDialog
+
+	def _setShowRemoveDateDialog(self,showRemoveDateDialog):
+
+		if self._showRemoveDateDialog!=showRemoveDateDialog:
+			self._showRemoveDateDialog=showRemoveDateDialog
+			self.on_showRemoveDateDialog.emit()
+
+	#def _setShowRemoveDateDialog	
 
 	@Slot()
 	def addNewDate(self):
@@ -254,13 +345,105 @@ class Bridge(QObject):
 
 		if self.saveDate.ret[0]:
 			self._updateHolidayModel()
-			self.closePopUp=[True,""]
 			self.showMainMessage=[True,self.saveDate.ret[1],"Ok"]
 		else:
-			self.closePopUp=[True,""]
 			self.showMainMessage=[True,self.saveDate.ret[1],"Error"]
 
+		self.closePopUp=[True,""]
+		self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()			
+
 	#def _saveDataRet
+
+	@Slot('QVariantList')
+	def removeDate(self,data):
+
+		self.showMainMessage=[False,"","Ok"]
+		self.removeAllDates=data[0]
+		if self.removeAllDates:
+			self.dateToRemove=None
+		else:
+			self.dateToRemove=data[1]
+
+		self.showRemoveDateDialog=[True,self.removeAllDates]
+
+	#def removeDate
+
+	@Slot(str)
+	def manageRemoveDateDialog(self,response):
+
+		self.showRemoveDateDialog=[False,False]
+		if response=="Accept":
+			self._launchRemoveDateProcess()
+
+	#def manageRemoveDatelDialog
+
+	def _launchRemoveDateProcess(self):
+
+		self.closePopUp=[False,APPLY_CHANGES_MSG]
+
+		self.removeDateProcess=RemoveDate(self.removeAllDates,self.dateToRemove)
+		self.removeDateProcess.start()
+		self.removeDateProcess.finished.connect(self._removeDateProcessRet)
+
+	#def _launchRemoveDateProcess
+
+	def _removeDateProcessRet(self):
+
+		if self.removeDateProcess.ret[0]:
+			self._updateHolidayModel()
+			self.showMainMessage=[True,self.removeDateProcess.ret[1],"Ok"]
+		else:
+			self.showMainMessage=[False,self.removeDateProcess.ret[1],"Error"]
+
+		self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()
+		self.closePopUp=[True,""]
+
+	#def _removeDateProcessRet	
+
+	@Slot(str)
+	def exportDatesConfig(self,exportPath):
+
+		self.showMainMessage=[False,"","Ok"]
+		self.closePopUp=[False,EXPORT_DATES_CONFIG]
+		self.generateBackup=GenerateBackup(exportPath)
+		self.generateBackup.start()
+		self.generateBackup.finished.connect(self._exportDatesConfigRet)
+
+	#def exportDatesConfig
+
+	def _exportDatesConfigRet(self):
+
+		if self.generateBackup.ret["status"]:
+			self.showMainMessage=[True,self.generateBackup.ret["code"],"Ok"]
+		else:
+			self.showMainMessage=[True,self.generateBackup.ret["code"],"Error"]
+		
+		self.closePopUp=[True,""]			
+
+	#def _exportDatesConfigRet
+
+	@Slot(str)
+	def importDatesConfig(self,importPath):
+
+		self.showMainMessage=[False,"","Ok"]
+		self.closePopUp=[False,IMPORT_DATES_CONFIG]
+		self.importBackup=ImportBackup(importPath)
+		self.importBackup.start()
+		self.importBackup.finished.connect(self._importBackupRet)
+
+	#def importDatesConfig
+
+	def _importBackupRet(self):
+
+		if self.importBackup.ret[0]:
+			self._updateHolidayModel()
+			self.showMainMessage=[True,self.importBackup.ret[1],"Ok"]
+		else:
+			self.showMainMessage=[True,self.importBackup.ret[1],"Error"]
+
+		self.closePopUp=[True,""]
+
+	#def _importBackupRet
 
 	@Slot()
 	def closeDateForm(self):
@@ -286,6 +469,12 @@ class Bridge(QObject):
 
 	on_daysInRange=Signal()
 	daysInRange=Property('QVariantList',_getDaysInRange,_setDaysInRange,notify=on_daysInRange)
+
+	on_enableGlobalOptions=Signal()
+	enableGlobalOptions=Property(bool,_getEnableGlobalOptions,_setEnableGlobalOptions,notify=on_enableGlobalOptions)
+
+	on_showRemoveDateDialog=Signal()
+	showRemoveDateDialog=Property('QVariantList',_getShowRemoveDateDialog,_setShowRemoveDateDialog,notify=on_showRemoveDateDialog)
 
 	systemLocale=Property(str,_getSystemLocale,constant=True)
 	holidayModel=Property(QObject,_getHolidayModel,constant=True)

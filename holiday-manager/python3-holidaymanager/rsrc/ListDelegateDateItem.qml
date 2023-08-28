@@ -108,7 +108,7 @@ Components.ListItem{
                 MenuItem{
                     icon.name:"delete.svg"
                     text:i18nd("holiday-manager","Delete the date")
-                    /*onClicked:holidayStackBridge.removeDate(dateId)*/
+                    onClicked:holidayStackBridge.removeDate([false,dateId])
                 }
             }
         }
