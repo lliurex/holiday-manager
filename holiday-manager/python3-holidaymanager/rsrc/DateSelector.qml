@@ -17,7 +17,7 @@ Popup {
     closePolicy:Popup.NoAutoClose
     onVisibleChanged:{
         if (visible){
-            loadInitVales()
+            loadInitValues()
         }
     }
 
@@ -309,7 +309,7 @@ Popup {
         }
     }
 
-    function loadInitVales(){
+    function loadInitValues(){
 
         calendar.startDate=undefined
         calendar.stopDate=undefined

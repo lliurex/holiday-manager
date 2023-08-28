@@ -31,7 +31,7 @@ Rectangle {
         property var endDate:endDate
         property var daysInRange:daysInRange
         property bool rangeDate:rangeDate
-        selectedDate:customInitDate
+        selectedDate:selectedDate
         locale:Qt.locale(calendar.calendarLocale)
 
        style: CalendarStyle {
