@@ -74,11 +74,11 @@ Rectangle{
 
                 MenuItem{
                     icon.name:"document-export.svg"
-                    text:i18nd("holiday-manager","Generate holidays backup")
+                    text:i18nd("holiday-manager","Generate backup")
                     enabled:holidayStackBridge.enableGlobalOptions
                     onClicked:{
                         backupAction="export"
-                        backupFileDialog.title=i18nd("holiday-manager","Please choose a file to save day list")
+                        backupFileDialog.title=i18nd("holiday-manager","Please choose a file to save holidays list")
                         backupFileDialog.selectExisting=false
                         backupFileDialog.open()
                     }
@@ -86,7 +86,7 @@ Rectangle{
 
                 MenuItem{
                     icon.name:"document-import.svg"
-                    text:i18nd("holiday-manager","Import holidays backup")
+                    text:i18nd("holiday-manager","Import backup")
                     onClicked:{
                         backupAction="import"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to load holidays list")
@@ -118,7 +118,7 @@ Rectangle{
             focus:true
             display:AbstractButton.TextBesideIcon
             icon.name:"list-add.svg"
-            text:i18nd("holiday-manager","New date")
+            text:i18nd("holiday-manager","New holiday")
             Layout.preferredHeight:40
             Keys.onReturnPressed: applyBtn.clicked()
             Keys.onEnterPressed: applyBtn.clicked()
@@ -142,9 +142,9 @@ Rectangle{
         dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
         dialogMsg:{
             if (holidayStackBridge.showRemoveDateDialog[1]){
-                i18nd("holiday-manager","The date list will be deleted.\nDo yo want to continue?")
+                i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
             }else{
-                i18nd("holiday-manager","The date will be deleted.\nDo yo want to continue?")
+                i18nd("holiday-manager","The holiday will be deleted.\nDo yo want to continue?")
             }
         }
         dialogVisible:holidayStackBridge.showRemoveDateDialog[0]
@@ -172,7 +172,7 @@ Rectangle{
         id:importDatesDialog
         dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
         dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
-        dialogMsg:i18nd("holiday-manager","New dates list will be loaded and replace the existing configutation.\nDo you want to continue?")
+        dialogMsg:i18nd("holiday-manager","New holidays list will be loaded and replace the existing configutation.\nDo you want to continue?")
         dialogWidth:600
         btnAcceptVisible:false
         btnAcceptText:""
@@ -224,43 +224,43 @@ Rectangle{
                 var msg=i18nd("holiday-manager","Error saving changes")
                 break;
             case -5:
-                var msg=i18nd("holiday-manager","Unabled to load date list")
+                var msg=i18nd("holiday-manager","Unabled to load holidays list")
                 break;
             case -7:
                 var msg=i18nd("holiday-manager","Unabled to import list. List blocked for other user")
                 break;
             case -8:
-                var msg=i18nd("holiday-manager","Error importing the list of dates")
+                var msg=i18nd("holiday-manager","Error importing the list of holidays")
                 break;
             case -9:
-                var msg=i18nd("holiday-manager","The list of dates to be imported does not exist")
+                var msg=i18nd("holiday-manager","The list of holidays to be imported does not exist")
                 break;
             case -11:
-                var msg=i18nd("holiday-manager","Error exporting the list of dates")
+                var msg=i18nd("holiday-manager","Error exporting the list of holidays")
                 break;
             case 2:
                 var msg=i18nd("holiday-manager","Changes apply succesfully")
                 break;
             case 3:
-                var msg=i18nd("holiday-manager","Dates alreday removed. Nothing to do")
+                var msg=i18nd("holiday-manager","The list of holidays alreday removed. Nothing to do")
                 break;
             case 5:
-                var msg=i18nd("holiday-manager","Date added successfully")
+                var msg=i18nd("holiday-manager","Holiday added successfully")
                 break;
             case 6:
-                var msg=i18nd("holiday-manager","List of dates imported successfully")
+                var msg=i18nd("holiday-manager","List of holidays imported successfully")
                 break;
             case 7:
-                var msg=i18nd("holiday-manager","Date edited successfully")
+                var msg=i18nd("holiday-manager","Holiday edited successfully")
                 break;
             case 10:
-                var msg=i18nd("holiday-manager","List of dates exported successfully")
+                var msg=i18nd("holiday-manager","List of holidays exported successfully")
                 break;
             case 11:
-                var msg=i18nd("holiday-manager","Date deleted successfully")
+                var msg=i18nd("holiday-manager","Holiday deleted successfully")
                 break;
             case 12:
-                var msg=i18nd("holiday-manager","Dates list deleted successfully")
+                var msg=i18nd("holiday-manager","The list of holidays deleted successfully")
                 break;
             default:
                 var msg=""

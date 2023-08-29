@@ -56,10 +56,10 @@ Popup {
                 var msg=i18nd("holiday-manager","Applying changes. Wait a moment...")
                 break;
             case 3:
-                var msg=i18nd("holiday-manager","Exporting dates configuration. Wait a moment...")
+                var msg=i18nd("holiday-manager","Exporting holidays configuration. Wait a moment...")
                 break;
             case 4:
-                var msg=i18nd("holiday-manager","Loading dates configuration. Wait a moment...")
+                var msg=i18nd("holiday-manager","Loading holidays configuration. Wait a moment...")
                 break;
             default:
                 var msg=""

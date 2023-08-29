@@ -451,6 +451,7 @@ class Bridge(QObject):
 		else:
 			self.showMainMessage=[True,self.importBackup.ret[1],"Error"]
 
+		self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()			
 		self.closePopUp=[True,""]
 
 	#def _importBackupRet

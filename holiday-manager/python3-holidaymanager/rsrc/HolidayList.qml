@@ -46,7 +46,7 @@ Rectangle {
                 anchors.centerIn: parent
                 width: parent.width - (units.largeSpacing * 4)
                 visible: listDates.count==0?true:false
-                text: i18nd("holiday-manager","No date is configured")
+                text: i18nd("holiday-manager","No holiday is configured")
             } 
          }
     }

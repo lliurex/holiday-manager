@@ -85,7 +85,7 @@ Components.ListItem{
             ToolTip.delay: 1000
             ToolTip.timeout: 3000
             ToolTip.visible: hovered
-            ToolTip.text:i18nd("holiday-manager","Click to manage this date")
+            ToolTip.text:i18nd("holiday-manager","Click to manage the holiday")
             onClicked:optionsMenu.open();
             onVisibleChanged:{
                 optionsMenu.close()
@@ -98,14 +98,14 @@ Components.ListItem{
 
                 MenuItem{
                     icon.name:"document-edit.svg"
-                    text:i18nd("holiday-manager","Edit date")
+                    text:i18nd("holiday-manager","Edit holiday")
                     onClicked:{
                         holidayStackBridge.loadDate(dateId)
                     }
                 }
                 MenuItem{
                     icon.name:"delete.svg"
-                    text:i18nd("holiday-manager","Delete the date")
+                    text:i18nd("holiday-manager","Delete the holiday")
                     onClicked:holidayStackBridge.removeDate([false,dateId])
                 }
             }
