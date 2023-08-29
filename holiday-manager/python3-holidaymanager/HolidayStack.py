@@ -35,7 +35,7 @@ class LoadDate(QThread):
 
 	#def run
 
-#class LoadBell
+#class LoadDate
 
 class AddDate(QThread):
 
@@ -74,7 +74,7 @@ class RemoveDate(QThread):
 
 	#def run
 
-#class RemoveBell
+#class RemoveDate
 
 class GenerateBackup(QThread):
 
@@ -108,7 +108,7 @@ class ImportBackup(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.dateMan.importDatesBackup(self.importPath)
+		self.ret=Bridge.dateMan.importDatesConfig(self.importPath)
 
 	#def run
 
@@ -117,7 +117,7 @@ class ImportBackup(QThread):
 
 class Bridge(QObject):
 
-	def __init__(self,ticket=None):
+	def __init__(self,appName=None,ticket=None,):
 
 		QObject.__init__(self)
 		Bridge.dateMan=HolidayManager.HolidayManager()
@@ -130,6 +130,10 @@ class Bridge(QObject):
 		self._dateDescription=Bridge.dateMan.dateDescription
 		self._enableGlobalOptions=False
 		self._showRemoveDateDialog=[False,False]
+		if appName!=None:
+			self._appName=appName
+		else:
+			self._appName="Holiday-Manager"
 						
 		Bridge.dateMan.createN4dClient(sys.argv[1])
 
@@ -147,6 +151,12 @@ class Bridge(QObject):
 			self.showMainMessage=[True,ret["code"],"Error"]
 
 	#def initBridge
+
+	def _getAppName(self):
+
+		return self._appName
+
+	#def _getAppName
 
 	def _getHolidayModel(self):
 
@@ -375,7 +385,7 @@ class Bridge(QObject):
 		if response=="Accept":
 			self._launchRemoveDateProcess()
 
-	#def manageRemoveDatelDialog
+	#def manageRemoveDateDialog
 
 	def _launchRemoveDateProcess(self):
 
@@ -476,6 +486,7 @@ class Bridge(QObject):
 	on_showRemoveDateDialog=Signal()
 	showRemoveDateDialog=Property('QVariantList',_getShowRemoveDateDialog,_setShowRemoveDateDialog,notify=on_showRemoveDateDialog)
 
+	appName=Property(str,_getAppName,constant=True)
 	systemLocale=Property(str,_getSystemLocale,constant=True)
 	holidayModel=Property(QObject,_getHolidayModel,constant=True)
 

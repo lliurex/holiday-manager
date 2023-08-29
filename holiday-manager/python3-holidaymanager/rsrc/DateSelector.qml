@@ -7,7 +7,6 @@ import QtQuick.Layouts 1.15
 Popup {
 
     id:dateSelectorPopUp
-
     width:530
     height:580
     anchors.centerIn: Overlay.overlay
@@ -28,7 +27,6 @@ Popup {
         color:"transparent"
         Text{ 
             text:i18nd("holiday-manager","Edit date")
-            font.family: "Quattrocento Sans Bold"
             font.pointSize: 16
         }
         GridLayout{
@@ -62,7 +60,7 @@ Popup {
                     if (rangeDate.checked){
                         day1Entry.text
                     }else{
-                        dayText.text
+                        dayEntry.text
                     }
                 }
                 endDate:{
@@ -85,8 +83,12 @@ Popup {
                             }else{
                                 day2Entry.text=info[0]
                             }
+                            dayEntry.text=""
                         }else{
-                            dayText.text=info[0]
+                            dayEntry.text=info[0]
+                            day1Entry.text=""
+                            day2Entry.text=""
+                            calendar.startDate=undefined
                         }
                     }
                 }
@@ -115,19 +117,7 @@ Popup {
                             
                     }
                     TextField{
-                        id:dayText 
-                        text:{
-                            if (!holidayStackBridge.dateRangeOption){
-                                if (holidayStackBridge.daysInRange.length>0){
-                                    holidayStackBridge.daysInRange[0]
-                                }else{
-                                    ""
-                                }
-                            }else{
-                                ""
-                            }
-                        }
-                        font.family: "Quattrocento Sans Bold"
+                        id:dayEntry 
                         font.pointSize: 10
                         horizontalAlignment:TextInput.AlignHCenter
                         readOnly:true
@@ -151,18 +141,6 @@ Popup {
                     }
                     TextField{
                         id:day1Entry 
-                        text:{
-                            if (holidayStackBridge.dateRangeOption){
-                                if (holidayStackBridge.daysInRange.length>0){
-                                    holidayStackBridge.daysInRange[0]
-                                }else{
-                                    ""
-                                }
-                            }else{
-                                ""
-                            }
-                        }
-                        font.family: "Quattrocento Sans Bold"
                         font.pointSize: 10
                         horizontalAlignment:TextInput.AlignHCenter
                         readOnly:true
@@ -176,18 +154,6 @@ Popup {
                     }
                     TextField{
                         id:day2Entry 
-                        text:{
-                           if (holidayStackBridge.dateRangeOption){
-                                if (holidayStackBridge.daysInRange.length>0){
-                                    holidayStackBridge.daysInRange[ holidayStackBridge.daysInRange.length-1]
-                                }else{
-                                    ""
-                                }
-                            }else{
-                                ""
-                            }
-                        }
-                        font.family: "Quattrocento Sans Bold"
                         font.pointSize: 10
                         horizontalAlignment:TextInput.AlignHCenter
                         readOnly:true
@@ -209,8 +175,6 @@ Popup {
                     }
                     TextField{
                         id:descriptionEntry 
-                        text:holidayStackBridge.dateDescription
-                        font.family: "Quattrocento Sans Bold"
                         font.pointSize: 10
                         horizontalAlignment:TextInput.AlignHLeft
                         Layout.preferredWidth:250
@@ -245,7 +209,7 @@ Popup {
                         if (rangeDate.checked){
                             tmpValue=day1Entry.text+"-"+day2Entry.text
                         }else{
-                            tmpValue=dayText.text
+                            tmpValue=dayEntry.text
                         }
                         holidayStackBridge.applyDateChanges([tmpValue,descriptionEntry.text])
                     }
@@ -297,7 +261,7 @@ Popup {
                 }
             }
         }else{
-            if (dayText.text==""){
+            if (dayEntry.text==""){
                 messageLabel.visible=true
                 messageLabel.text=i18nd("holiday-manager","You must indicate the date")
                 return false
@@ -311,13 +275,14 @@ Popup {
 
     function loadInitValues(){
 
+        messageLabel.visible=false
         calendar.startDate=undefined
         calendar.stopDate=undefined
         calendar.daysInRange=holidayStackBridge.daysInRange
         rangeDate.checked=holidayStackBridge.dateRangeOption
-
+        
         if (holidayStackBridge.dateRangeOption){
-            dayText.text=""
+            dayEntry.text=""
             if (holidayStackBridge.daysInRange.length>0){
                 day1Entry.text=holidayStackBridge.daysInRange[0]
                 day2Entry.text=holidayStackBridge.daysInRange[ holidayStackBridge.daysInRange.length-1]
@@ -332,11 +297,11 @@ Popup {
         }else{
             day1Entry.text=""
             day2Entry.text=""
-            dayText.text=holidayStackBridge.daysInRange[0]
-            calendar.initDate=dayText.text
+            dayEntry.text=holidayStackBridge.daysInRange[0]
+            calendar.initDate=dayEntry.text
             calendar.endDate=""
-            if (dayText!=""){
-                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),dayText.text,"dd/MM/yyyy")
+            if (dayEntry!=""){
+                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),dayEntry.text,"dd/MM/yyyy")
             }else{
                 calendar.selectedDate=new Date()
             }

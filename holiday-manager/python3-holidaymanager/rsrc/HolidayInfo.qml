@@ -10,7 +10,6 @@ Rectangle{
     color:"transparent"
     Text{ 
         text:i18nd("holiday-manager","Configured holiday")
-        font.family: "Quattrocento Sans Bold"
         font.pointSize: 16
     }
 
@@ -124,7 +123,6 @@ Rectangle{
             Keys.onReturnPressed: applyBtn.clicked()
             Keys.onEnterPressed: applyBtn.clicked()
             onClicked:{
-                console.log("1")
                 holidayStackBridge.addNewDate()
             }
         }
@@ -141,10 +139,10 @@ Rectangle{
     ChangesDialog{
         id:removeDateDialog
         dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
-        dialogTitle:"bell-scheduler"+" - "+i18nd("holiday-manager","Holiday List")
+        dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
         dialogMsg:{
             if (holidayStackBridge.showRemoveDateDialog[1]){
-                i18nd("holiday-manager","All dates will be deleted.\nDo yo want to continue?")
+                i18nd("holiday-manager","The date list will be deleted.\nDo yo want to continue?")
             }else{
                 i18nd("holiday-manager","The date will be deleted.\nDo yo want to continue?")
             }
@@ -173,8 +171,8 @@ Rectangle{
     ChangesDialog{
         id:importDatesDialog
         dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
-        dialogTitle:"holiday-manager"+" - "+i18nd("holiday-manager","Holiday List")
-        dialogMsg:i18nd("holiday-manager","New dates list will be loaded and replace the existing configutarion.\nDo you want to continue?")
+        dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
+        dialogMsg:i18nd("holiday-manager","New dates list will be loaded and replace the existing configutation.\nDo you want to continue?")
         dialogWidth:600
         btnAcceptVisible:false
         btnAcceptText:""
@@ -190,7 +188,7 @@ Rectangle{
                 backupFileDialog.open()
            }
            function onRejectDialogClicked(){
-                importBellDialog.close()
+                importDatesDialog.close()
            }
 
         }
@@ -227,7 +225,7 @@ Rectangle{
                 break;
             case -5:
                 var msg=i18nd("holiday-manager","Unabled to load date list")
-                breal;
+                break;
             case -7:
                 var msg=i18nd("holiday-manager","Unabled to import list. List blocked for other user")
                 break;
@@ -262,7 +260,7 @@ Rectangle{
                 var msg=i18nd("holiday-manager","Date deleted successfully")
                 break;
             case 12:
-                var msg=i18nd("holiday-manager","Dates deleted successfully")
+                var msg=i18nd("holiday-manager","Dates list deleted successfully")
                 break;
             default:
                 var msg=""

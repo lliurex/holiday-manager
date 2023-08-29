@@ -47,7 +47,6 @@ Components.ListItem{
         Text{
             id:dateText
             text:dateId
-            font.family: "Quattrocento Sans Bold"
             font.pointSize: 10
             horizontalAlignment:Text.AlignLeft
             width:80
@@ -60,7 +59,6 @@ Components.ListItem{
         Text{
             id:descriptionText
             text:dateDescription
-            font.family:"Quattrocento Sans Bold"
             font.pointSize: 10
             horizontalAlignment:Text.AlignLeft
             elide:Text.ElideMiddle

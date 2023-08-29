@@ -63,7 +63,7 @@ class HolidayManager(object):
 		
 		self.loadError=False
 		result=self.client.HolidayListManager.read_conf()
-		self._debug("Read configuration file: ",result)
+		self._debug("readConf: ",result)
 		self.datesConfig=result["info"]
 		self.datesConfigData=[]
 		if result["status"]:
@@ -182,11 +182,13 @@ class HolidayManager(object):
 			action="edit"
 			if newDate[0]!=self.currentDateConfig[0]:
 				retDelete=self.client.HolidayListManager.delete_day(self.currentDateConfig[0])
+				self._debug("addDate-delete: ",retDelete)
 				if not retDelete['status']:
 					ret=False
 		if ret:
 			retSave=self.client.HolidayListManager.add_day(newDate)
-		
+			self._debug("addDate-save: ",retSave)
+
 			if retSave["status"]:
 				retReadConfig=self.readConf()
 				if retReadConfig['status']:
@@ -209,6 +211,7 @@ class HolidayManager(object):
 		if allDates:
 			if len(self.datesConfig)>0:
 				retRemove=self.client.HolidayListManager.reset_holiday_list()
+				self._debug("removeDate-all: ",retRemove)
 				if retRemove['status']:
 					retReadConfig=self.readConf()
 					if retReadConfig["status"]:
@@ -221,6 +224,7 @@ class HolidayManager(object):
 				return [True,HolidayManager.DATES_ALREADY_REMOVED]
 		else:
 			ret=self.client.HolidayListManager.delete_day(dateToRemove)
+			self._debug("removeDate: ",ret)
 
 			if ret["status"]:
 				retReadConfig=self.readConf()
@@ -237,16 +241,16 @@ class HolidayManager(object):
 
 		user=os.environ["USER"]
 		result=self.client.HolidayListManager.export_holiday_list(user,destFile)
-		self._debug("Export bells conf : ",result)
+		self._debug("exportDatesConfig: ",result)
 
 		return result
 
 	#def exportDatesConfig
 
-	def importDatesBackup(self,origFile):
+	def importDatesConfig(self,origFile):
 
 		resultImport=self.client.HolidayListManager.import_holiday_list(origFile)
-
+		self._debug("importDatesConfig:",resultImport)
 		if resultImport['status']:
 			retReadConfig=self.readConf()
 			if retReadConfig["status"]:
@@ -256,7 +260,7 @@ class HolidayManager(object):
 		else:
 			return [False,resultImport["code"]]
 
-	#def importBellBackup
+	#def importDatesConfigs
 
 	
 #class HolidayManager	
