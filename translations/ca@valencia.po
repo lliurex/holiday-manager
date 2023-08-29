@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-29 10:05+0200\n"
-"PO-Revision-Date: 2023-08-29 10:57+0200\n"
+"PO-Revision-Date: 2023-08-29 13:10+0200\n"
 "Last-Translator: Pilar Embid Giner <embid_mar@gva.es>\n"
 "Language-Team: LliureX\n"
 "Language: es\n"
@@ -97,7 +97,7 @@ msgstr "Seleccioneu un fitxer per a guardar la llista de festius"
 
 #: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:89
 msgid "Import backup"
-msgstr "Impoprta còpia de seguretat"
+msgstr "Importa còpia de seguretat"
 
 #: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:92
 msgid "Please choose a file to load holidays list"
