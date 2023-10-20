@@ -29,9 +29,9 @@ class LoadDate(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		Bridge.dateMan.initValues()
+		Bridge.holidayManager.initValues()
 		if not self.newDate:
-			Bridge.dateMan.loadDateConfig(self.dateInfo)
+			Bridge.holidayManager.loadDateConfig(self.dateInfo)
 
 	#def run
 
@@ -50,7 +50,7 @@ class AddDate(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.dateMan.addDate(self.newDate)
+		self.ret=Bridge.holidayManager.addDate(self.newDate)
 
 	#def run
 
@@ -70,7 +70,7 @@ class RemoveDate(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.dateMan.removeDate(self.allDates,self.dateToRemove)
+		self.ret=Bridge.holidayManager.removeDate(self.allDates,self.dateToRemove)
 
 	#def run
 
@@ -89,7 +89,7 @@ class GenerateBackup(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.dateMan.exportDatesConfig(self.exportPath)
+		self.ret=Bridge.holidayManager.exportDatesConfig(self.exportPath)
 
 	#def run
 
@@ -108,7 +108,7 @@ class ImportBackup(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.dateMan.importDatesConfig(self.importPath)
+		self.ret=Bridge.holidayManager.importDatesConfig(self.importPath)
 
 	#def run
 
@@ -120,14 +120,14 @@ class Bridge(QObject):
 	def __init__(self,appName=None,ticket=None,):
 
 		QObject.__init__(self)
-		Bridge.dateMan=HolidayManager.HolidayManager()
+		Bridge.holidayManager=HolidayManager.HolidayManager()
 		self._holidayModel=HolidayModel.HolidayModel()
 		self._showMainMessage=[False,"","Ok"]
 		self._showDateForm=False
 		self._closePopUp=[True,""]
-		self._dateRangeOption=Bridge.dateMan.dateRangeOption
-		self._daysInRange=Bridge.dateMan.daysInRange
-		self._dateDescription=Bridge.dateMan.dateDescription
+		self._dateRangeOption=Bridge.holidayManager.dateRangeOption
+		self._daysInRange=Bridge.holidayManager.daysInRange
+		self._dateDescription=Bridge.holidayManager.dateDescription
 		self._enableGlobalOptions=False
 		self._showRemoveDateDialog=[False,False]
 		if appName!=None:
@@ -135,16 +135,16 @@ class Bridge(QObject):
 		else:
 			self._appName="Holiday-Manager"
 						
-		Bridge.dateMan.createN4dClient(sys.argv[1])
+		Bridge.holidayManager.createN4dClient(sys.argv[1])
 
 	#def _init__
 
 	def initBridge(self):
 
-		ret=Bridge.dateMan.readConf()
+		ret=Bridge.holidayManager.readConf()
 		if ret["status"]:
-			self._systemLocale=Bridge.dateMan.systemLocale
-			self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()			
+			self._systemLocale=Bridge.holidayManager.systemLocale
+			self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()			
 			self._updateHolidayModel()
 			
 		else:
@@ -173,7 +173,7 @@ class Bridge(QObject):
 	def _updateHolidayModel(self):
 
 		ret=self._holidayModel.clear()
-		datesEntries=Bridge.dateMan.datesConfigData
+		datesEntries=Bridge.holidayManager.datesConfigData
 		for item in datesEntries:
 			if item["id"]!="":
 				self._holidayModel.appendRow(item["id"],item["type"],item["description"])
@@ -311,10 +311,10 @@ class Bridge(QObject):
 
 	def _initializeVars(self):
 
-		self.dateRangeOption=Bridge.dateMan.dateRangeOption
-		self.daysInRange=Bridge.dateMan.daysInRange
-		self.dateDescription=Bridge.dateMan.dateDescription
-		self.currentDateConfig=copy.deepcopy(Bridge.dateMan.currentDateConfig)
+		self.dateRangeOption=Bridge.holidayManager.dateRangeOption
+		self.daysInRange=Bridge.holidayManager.daysInRange
+		self.dateDescription=Bridge.holidayManager.dateDescription
+		self.currentDateConfig=copy.deepcopy(Bridge.holidayManager.currentDateConfig)
 		self.showDateForm=True
 
 	#def _initializeVars
@@ -360,7 +360,7 @@ class Bridge(QObject):
 			self.showMainMessage=[True,self.saveDate.ret[1],"Error"]
 
 		self.closePopUp=[True,""]
-		self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()			
+		self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()			
 
 	#def _saveDataRet
 
@@ -405,7 +405,7 @@ class Bridge(QObject):
 		else:
 			self.showMainMessage=[False,self.removeDateProcess.ret[1],"Error"]
 
-		self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()
+		self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()
 		self.closePopUp=[True,""]
 
 	#def _removeDateProcessRet	
@@ -451,7 +451,7 @@ class Bridge(QObject):
 		else:
 			self.showMainMessage=[True,self.importBackup.ret[1],"Error"]
 
-		self.enableGlobalOptions=Bridge.dateMan.checkGlobalOptionsStatus()			
+		self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()			
 		self.closePopUp=[True,""]
 
 	#def _importBackupRet
