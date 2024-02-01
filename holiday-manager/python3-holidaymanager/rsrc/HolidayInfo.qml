@@ -59,7 +59,6 @@ Rectangle{
         Button {
             id:backupBtn
             visible:true
-            focus:true
             display:AbstractButton.TextBesideIcon
             icon.name:"backup.svg"
             text:i18nd("holiday-manager","Backup")
@@ -102,7 +101,6 @@ Rectangle{
        Button {
             id:deleteBtn
             visible:true
-            focus:true
             display:AbstractButton.TextBesideIcon
             icon.name:"delete.svg"
             text:i18nd("holiday-manager","Delete holidays list")
@@ -114,13 +112,10 @@ Rectangle{
         Button {
             id:newBtn
             visible:true
-            focus:true
             display:AbstractButton.TextBesideIcon
             icon.name:"list-add.svg"
             text:i18nd("holiday-manager","New holiday")
             Layout.preferredHeight:40
-            Keys.onReturnPressed: applyBtn.clicked()
-            Keys.onEnterPressed: applyBtn.clicked()
             onClicked:{
                 holidayStackBridge.addNewDate()
             }
