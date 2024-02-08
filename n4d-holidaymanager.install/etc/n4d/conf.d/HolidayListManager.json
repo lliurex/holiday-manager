@@ -46,6 +46,11 @@
                 "admins",
 		"teachers"
             ]
+        },
+        "is_holiday":{
+            "allowed_groups":[
+                "anonymous"
+            ]
         }
     }
 }
