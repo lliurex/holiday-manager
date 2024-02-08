@@ -1,3 +1,9 @@
+holiday-manager (0.13) jammy; urgency=medium
+
+  * Migrated to PySide2-QML
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 08 Feb 2024 08:59:42 +0100
+
 holiday-manager (0.12.26) jammy; urgency=medium
 
   * Initial release for Jammy
