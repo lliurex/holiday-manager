@@ -1,3 +1,9 @@
+holiday-manager (0.13.1) jammy; urgency=medium
+
+  * Added new method to check if holiday list is empty
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 28 Feb 2024 16:20:34 +0100
+
 holiday-manager (0.13) jammy; urgency=medium
 
   * Migrated to PySide2-QML
