@@ -218,5 +218,23 @@ class HolidayListManager:
 
 		return listDays	
 
-	#def _get_days_inrange 	
+	#def _get_days_inrange
+
+	def are_days_configured(self):
+
+		are_days=False
+		if os.path.exists(self.config_file):
+			try:
+				with open(self.config_file,'r') as fd:
+					data=json.load(fd)
+				if data:
+					are_days=True
+			except:
+				pass
+
+		ret={"status":are_days,"code":"","data":""}
+
+		return n4d.responses.build_successful_call_response(ret)
+
+	#def are_days_configured 	
 
