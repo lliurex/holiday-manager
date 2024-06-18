@@ -1,23 +1,23 @@
-#!/usr/bin/env python3
+#! /usr/bin/python3
 
 import time
 from datetime import date
 
-import holidaymanager.HolidayManager as HolidayManager
-
-
+import n4d.client
 
 class CheckDay(object):
 
 	def __init__(self):
-		self.holidayManager=HolidayManager.HolidayManager()
+
 		self.current_day=date.today().strftime('%d/%m/%Y')
+		self.n4d=n4d.client.Client()
 		self.check_day()
+
 	#def __init__	
 
 	def check_day(self):
 
-		check=self.holidayManager.is_holiday(self.current_day)
+		check=self.n4d.HolidayListManager.is_holiday(self.current_day)["status"]
 		if check:
 			exit(1) 
 		else:
