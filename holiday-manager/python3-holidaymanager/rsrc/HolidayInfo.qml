@@ -1,8 +1,9 @@
-import org.kde.kirigami 2.16 as Kirigami
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
+import QtCore
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Dialogs
+import org.kde.kirigami as Kirigami
 
 Rectangle{
     id:rectLayout
@@ -77,7 +78,7 @@ Rectangle{
                     onClicked:{
                         backupAction="export"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to save holidays list")
-                        backupFileDialog.selectExisting=false
+                        backupFileDialog.fileMode=FileDialog.SaveFile
                         backupFileDialog.open()
                     }
                 }
@@ -88,7 +89,7 @@ Rectangle{
                     onClicked:{
                         backupAction="import"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to load holidays list")
-                        backupFileDialog.selectExisting=true
+			backupFileDialog.fileMode=FileDialog.OpenFile
                         importDatesDialog.open()
 
                     }
@@ -125,10 +126,10 @@ Rectangle{
     CustomPopUp{
         id:waitingForm
     }
-    
+    /*
     DateSelector{
         id:dateSelector
-    }
+    }*/
 
     ChangesDialog{
         id:removeDateDialog
@@ -191,10 +192,10 @@ Rectangle{
 
     FileDialog{
         id:backupFileDialog
-        folder:shortcuts.home
+        currentFolder:StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted:{
             var selectedPath=""
-            selectedPath=backupFileDialog.fileUrl.toString()
+            selectedPath=backupFileDialog.selectedFile.toString()
             selectedPath=selectedPath.replace(/^(file:\/{2})/,"")
             switch(backupAction){
                 case "export":
