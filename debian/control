@@ -7,14 +7,15 @@ Build-Depends: debhelper (>=10),
                python3-setuptools,
  			   python3-all,
 			   python3-poinstaller,
-			   llxsrchelper         
+			   llxsrchelper,
+			   pybuild-plugin-pyproject
 Standards-Version: 4.1.2
 Homepage: http://lliurex.net
 Vcs-Browser: https://svn.lliurex.net/jammy/holiday-manager
 
 Package: python3-holidaymanager
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, n4d-holidaymanager (= ${binary:Version}),python3-pyside2.qtqml, python3-pyside2.qtwidgets, python3-pyside2.qtquick,python3-pyside2.qtgui,python3-pyside2.qtquickwidgets
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, n4d-holidaymanager (= ${binary:Version}),pyside6-tools,python3-pyside6.qtqml, python3-pyside6.qtwidgets, python3-pyside6.qtquick,python3-pyside6.qtgui,python3-pyside6.qtquickwidgets
 Description: API package
   Provides the API to manage holidays and QML component
 

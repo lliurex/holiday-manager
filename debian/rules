@@ -14,8 +14,9 @@
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 export PYBUILD_NAME=holiday-manager
+export PYBUILD_DESTDIR_python3=debian/output
 %:
-	dh $@ --with llxsrc,python3 --buildsystem pybuild
+	dh $@ --with llxsrc,python3,i18n --buildsystem pybuild
 
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
@@ -23,6 +24,4 @@ export PYBUILD_NAME=holiday-manager
 #	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
 
 
-override_dh_auto_install:
-	dh_auto_install
-	python3 setup.py install --root $(CURDIR)/debian/python3-holidaymanager --prefix=/usr
+override_dh_auto_test:
