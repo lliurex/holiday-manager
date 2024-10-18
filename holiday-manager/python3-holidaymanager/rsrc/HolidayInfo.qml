@@ -126,10 +126,10 @@ Rectangle{
     CustomPopUp{
         id:waitingForm
     }
-    /*
+    
     DateSelector{
         id:dateSelector
-    }*/
+    }
 
     ChangesDialog{
         id:removeDateDialog
