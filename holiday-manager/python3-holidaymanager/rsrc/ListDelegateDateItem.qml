@@ -43,8 +43,9 @@ Components.ItemDelegate{
                     "/usr/lib/python3/dist-packages/holidaymanager/rsrc/calendar_range_day.png"
               }
             }
+	    anchors.left:parent.left
             anchors.verticalCenter:parent.verticalCenter
-            anchors.leftMargin:20
+            anchors.leftMargin:10
         }
         Text{
             id:dateText
@@ -66,9 +67,9 @@ Components.ItemDelegate{
             elide:Text.ElideMiddle
             width:{
                 if (listDateItem.ListView.isCurretItem){
-                    parent.width-(dateImage.width+dateText.width+manageDateBtn.width+150)
+                    parent.width-(dateImage.width+dateText.width+manageDateBtn.width+160)
                 }else{
-                  parent.width-(dateImage.width+dateText.width+150)
+                  parent.width-(dateImage.width+dateText.width+160)
                 }
             }
             anchors.left:dateText.right

@@ -20,6 +20,8 @@ Popup {
     }
     background:Rectangle{
         color:"#ebeced"
+	border.color:"#b8b9ba"
+
     }
 
     contentItem:Rectangle{
@@ -50,12 +52,12 @@ Popup {
                 Layout.topMargin: 40
             }
 
-            Calendar{
+            CustomCalendar{
                 id:calendar
                 Layout.alignment:Qt.AlignHCenter
                 Layout.preferredWidth:325
                 Layout.topMargin: messageLabel.visible?0:50
-                calendarLocale:holidayStackBridge.systemLocale
+                currentLocale:Qt.locale(holidayStackBridge.systemLocale)
                 startDate:undefined
                 stopDate:undefined
                 initDate:{
@@ -74,8 +76,10 @@ Popup {
                 }
                 rangeDate:rangeDate.checked
                 daysInRange:holidayStackBridge.daysInRange
-                selectedDate:new Date()
-                Connections{
+		currentMonth:new Date().getMonth()
+		currentYear:new Date().getFullYear()
+		fullMonth:new Date().toLocaleString(Qt.locale(),'MMMM') 
+		Connections{
                     target:calendar
                     function onGetSelectedDate(info){
                         if (rangeDate.checked){
@@ -274,17 +278,19 @@ Popup {
         calendar.stopDate=undefined
         calendar.daysInRange=holidayStackBridge.daysInRange
         rangeDate.checked=holidayStackBridge.dateRangeOption
+	var newDate=new Date()
+
         
         if (holidayStackBridge.dateRangeOption){
             dayEntry.text=""
             if (holidayStackBridge.daysInRange.length>0){
                 day1Entry.text=holidayStackBridge.daysInRange[0]
                 day2Entry.text=holidayStackBridge.daysInRange[ holidayStackBridge.daysInRange.length-1]
-                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")
+                newDate=Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")
             }else{
                 day1Entry.text=""
                 day2Entry.text=""
-                calendar.selectedDate=new Date()
+                newDate=new Date()
             }
             calendar.initDate=day1Entry.text
             calendar.endDate=day2Entry.text
@@ -295,13 +301,16 @@ Popup {
             calendar.initDate=dayEntry.text
             calendar.endDate=""
             if (dayEntry!=""){
-                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),dayEntry.text,"dd/MM/yyyy")
+                newDate=Date.fromLocaleString(Qt.locale(),dayEntry.text,"dd/MM/yyyy")
             }else{
-                calendar.selectedDate=new Date()
+                newDate=new Date()
             }
 
         }
         descriptionEntry.text=holidayStackBridge.dateDescription
+	calendar.currentMonth=newDate.getMonth()
+	calendar.currentYear=newDate.getFullYear()
+	calendar.fullMonth=newDate.toLocaleString(Qt.locale(),'MMMM')
  
     }
 
