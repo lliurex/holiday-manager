@@ -92,11 +92,11 @@ GridLayout{
 					onClicked:{
 						if (currentMonth<11){
 							currentMonth=currentMonth+1
-							fullMonth=currentLocale.monthName(currentMonth)
+							fullMonth=currentLocale.monthName(currentMonth).split(" ").slice(-1)[0]
 						}else{
 							currentMonth=0
 							currentYear=currentYear+1
-							fullMonth=currentLocale.monthName(currentMonth)
+							fullMonth=currentLocale.monthName(currentMonth).split(" ").slice(-1)[0]
 						}
 					}
 				}
