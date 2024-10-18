@@ -78,7 +78,7 @@ Popup {
                 daysInRange:holidayStackBridge.daysInRange
 		currentMonth:new Date().getMonth()
 		currentYear:new Date().getFullYear()
-		fullMonth:new Date().toLocaleString(Qt.locale(),'MMMM') 
+		fullMonth:new Date().toLocaleString(Qt.locale(),'MMMM').split(" ").slice(-1)[0] 
 		Connections{
                     target:calendar
                     function onGetSelectedDate(info){
@@ -310,7 +310,7 @@ Popup {
         descriptionEntry.text=holidayStackBridge.dateDescription
 	calendar.currentMonth=newDate.getMonth()
 	calendar.currentYear=newDate.getFullYear()
-	calendar.fullMonth=newDate.toLocaleString(Qt.locale(),'MMMM')
+	calendar.fullMonth=newDate.toLocaleString(Qt.locale(),'MMMM').split(" ").slice(-1)[0] 
  
     }
 
