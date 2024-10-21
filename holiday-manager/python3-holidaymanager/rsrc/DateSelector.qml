@@ -20,7 +20,9 @@ Popup {
     }
     background:Rectangle{
         color:"#ebeced"
-	border.color:"#b8b9ba"
+        border.color:"#b8b9ba"
+        border.width:1
+        radius:0,5
 
     }
 
@@ -76,10 +78,10 @@ Popup {
                 }
                 rangeDate:rangeDate.checked
                 daysInRange:holidayStackBridge.daysInRange
-		currentMonth:new Date().getMonth()
-		currentYear:new Date().getFullYear()
-		fullMonth:new Date().toLocaleString(Qt.locale(),'MMMM').split(" ").slice(-1)[0] 
-		Connections{
+                currentMonth:new Date().getMonth()
+                currentYear:new Date().getFullYear()
+                fullMonth:new Date().toLocaleString(Qt.locale(),'MMMM').split(" ").slice(-1)[0]
+                Connections{
                     target:calendar
                     function onGetSelectedDate(info){
                         if (rangeDate.checked){
