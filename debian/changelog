@@ -1,3 +1,9 @@
+holiday-manager (0.23.3) noble; urgency=medium
+
+  * Minor fixes in style
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 13 Nov 2024 08:54:22 +0100
+
 holiday-manager (0.23.2) noble; urgency=medium
 
   * Fixed Dialog style
