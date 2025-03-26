@@ -1,3 +1,9 @@
+holiday-manager (0.23.4) noble; urgency=medium
+
+  * Fixed translation
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 26 Mar 2025 09:56:43 +0100
+
 holiday-manager (0.23.3) noble; urgency=medium
 
   * Minor fixes in style
