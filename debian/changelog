@@ -1,3 +1,9 @@
+holiday-manager (0.13.2) jammy; urgency=medium
+
+  * Fixed translation
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 26 Mar 2025 09:59:17 +0100
+
 holiday-manager (0.13.1) jammy; urgency=medium
 
   * Added new method to check if holiday list is empty
