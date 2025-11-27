@@ -134,7 +134,6 @@ Rectangle{
     ChangesDialog{
         id:removeDateDialog
         dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
-        dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
         dialogMsg:{
             if (holidayStackBridge.showRemoveDateDialog[1]){
                 i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
@@ -166,7 +165,6 @@ Rectangle{
     ChangesDialog{
         id:importDatesDialog
         dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
-        dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
         dialogMsg:i18nd("holiday-manager","New holidays list will be loaded and replace the existing configutation.\nDo you want to continue?")
         dialogWidth:600
         btnAcceptVisible:false
