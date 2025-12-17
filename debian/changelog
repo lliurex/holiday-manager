@@ -1,3 +1,10 @@
+holiday-manager (0.23.6) noble; urgency=medium
+
+  * Allowed group NoDocente to use app
+  * Fixed n4d timeout
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 17 Dec 2025 10:57:34 +0100
+
 holiday-manager (0.23.5) noble; urgency=medium
 
   * Fixed custom dialog template
