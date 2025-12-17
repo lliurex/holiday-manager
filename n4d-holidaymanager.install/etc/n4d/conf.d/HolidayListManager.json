@@ -9,42 +9,48 @@
             "allowed_groups": [
                 "sudo",
                 "admins",
-		"teachers"
+                "teachers",
+                "NoDocente"
             ]
         },
         "add_day": {
             "allowed_groups": [
                 "sudo",
                 "admins",
-		"teachers"
+                "teachers",
+                "NoDocente"
             ]
         },
         "delete_day": {
             "allowed_groups": [
                 "sudo",
                 "admins",
-		"teachers"
+                "teachers",
+                "NoDocente"
             ]
         },
         "reset_holiday_list": {
             "allowed_groups": [
                 "sudo",
                 "admins",
-		"teachers"
+                "teachers",
+                "NoDocente"
             ]
         },
         "import_holiday_list": {
             "allowed_groups": [
                 "sudo",
                 "admins",
-		"teachers"
+                "teachers",
+                "NoDocente"
             ]
         },
         "export_holiday_list": {
             "allowed_groups": [
                 "sudo",
                 "admins",
-		"teachers"
+                "teachers",
+                "NoDocente"
             ]
         },
         "is_holiday":{
