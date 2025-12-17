@@ -1,3 +1,10 @@
+holiday-manager (0.13.3) jammy; urgency=medium
+
+  * Allowed group NoDocente to use app
+  * Fixed n4d timeout
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 17 Dec 2025 11:01:06 +0100
+
 holiday-manager (0.13.2) jammy; urgency=medium
 
   * Fixed translation
