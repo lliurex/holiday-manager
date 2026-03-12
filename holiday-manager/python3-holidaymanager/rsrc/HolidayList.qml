@@ -35,7 +35,7 @@ Rectangle {
             highlightResizeDuration: 0
             model:holidayModel
             delegate: ListDelegateDateItem{
-                width:datesTable.width
+                width:datesTable.width-18
                 dateId:model.id
                 dateType:model.type
                 dateDescription:model.description
