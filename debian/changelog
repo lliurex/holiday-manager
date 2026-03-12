@@ -1,3 +1,9 @@
+holiday-manager (0.13.4) jammy; urgency=medium
+
+  * Minor change
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 12 Mar 2026 12:19:04 +0100
+
 holiday-manager (0.13.3) jammy; urgency=medium
 
   * Allowed group NoDocente to use app
