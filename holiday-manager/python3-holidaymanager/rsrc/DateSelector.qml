@@ -113,7 +113,7 @@ Popup {
 
                 RadioButton{
                     id:singleDate
-                    checked:holidayStackBridge.dateToLoad.rangeOption
+                    checked:!holidayStackBridge.dateToLoad.rangeOption
                     text:i18nd("holiday-manager","Day:")
                     ButtonGroup.group:dateOptionsGroup
                             

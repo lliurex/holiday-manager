@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
 import os
+import subprocess
 import n4d.responses
 import sys
 import json
-import codecs
 import shutil
 import copy
 from datetime import datetime, date,timedelta
@@ -40,14 +40,12 @@ class HolidayListManager:
 			self._create_conf(self.config_dir,self.config_file)
 
 		try:
-			f=open(self.config_file)
-			self.holiday_list=json.load(f)
+			with open(self.config_file,'r',encoding="utf-8") as fd:
+				self.holiday_list=json.load(fd)
 			ret= {"status":True,"code":HolidayListManager.READ_LIST_SUCCESSFUL,"info":self.holiday_list}
 		except Exception as e:	
 			ret={"status":False,"code":HolidayListManager.READ_LIST_ERROR,"info":self.holiday_list}
 
-		f.close()			
-		
 		return n4d.responses.build_successful_call_response(ret)
 
 	#def read_conf
@@ -57,22 +55,23 @@ class HolidayListManager:
 		if not os.path.exists(config_folder):
 			os.makedirs(config_folder)	
 
-		var={}	
-		with codecs.open(file,'w',encoding="utf-8") as f:
-			json.dump(var,f,ensure_ascii=False)
-			f.close()	
+		var={}
+		with open(file,'w',encoding="utf-8") as fd:
+			json.dump(var,fd,ensure_ascii=False)
 	
 	#def _create_conf		
 
 	def add_day(self,newDate):
 		
 		current_list=self.holiday_list.copy()
-		current_list[newDate[0]]={}
-		current_list[newDate[0]]["description"]=newDate[1]
+
+		tmpDate=newDate.get("value")
+		tmpDescription=newDate.get("description")
+		current_list[tmpDate]={"description":tmpDescription}
 
 		ret=self._write_conf(current_list)
 		
-		if ret["status"]:
+		if ret.get("status"):
 			shutil.move(self.block_file,self.config_file)
 			
 		return n4d.responses.build_successful_call_response(ret)
@@ -83,15 +82,16 @@ class HolidayListManager:
 		
 		if os.path.exists(self.block_file):
 			return {"status":False,"code":HolidayListManager.LIST_BLOCK_ERROR,"info":""}
-		else:
-			self._create_conf(self.config_dir,self.block_file)
-			try:	
-				with codecs.open(self.block_file,'w',encoding="utf-8") as f:
-					json.dump(info,f,ensure_ascii=False)
-					f.close()	
-					return {"status":True,"code":HolidayListManager.WRITE_LIST_SUCCESSFUL,"info":""}
-			except Exception as e:
-				return {"status":False,"code":HolidayListManager.WRITE_LIST_ERROR,"info":str(e)}
+		
+		if not os.path.exists(self.config_dir):
+			os.makedirs(self.config_dir)
+
+		try:	
+			with open(self.block_file,'w',encoding="utf-8") as fd:
+				json.dump(info,fd,ensure_ascii=False)
+				return {"status":True,"code":HolidayListManager.WRITE_LIST_SUCCESSFUL,"info":""}
+		except Exception as e:
+			return {"status":False,"code":HolidayListManager.WRITE_LIST_ERROR,"info":str(e)}
 
 	#def _write_conf		
 
@@ -105,14 +105,11 @@ class HolidayListManager:
 		'''	
 		info=self.holiday_list.copy()
 
-		try:
-			info.pop(day)
-		except Exception as e:
-			pass
-
+		info.pop(day,None)
+	
 		ret=self._write_conf(info)
 
-		if ret["status"]:
+		if ret.get("status"):
 			shutil.move(self.block_file,self.config_file)
 			self.holiday_list=info
 		
@@ -126,7 +123,7 @@ class HolidayListManager:
 		
 		ret=self._write_conf(info)
 
-		if ret["status"]:
+		if ret.get("status"):
 			shutil.move(self.block_file,self.config_file)
 			self.holiday_list=info		
 		
@@ -136,41 +133,47 @@ class HolidayListManager:
 
 	def import_holiday_list(self,orig_path):
 		
-		if os.path.exists(orig_path):
-			try:
-				f=open(orig_path)
-				read=json.load(f)
-				if not os.path.exists(self.block_file):
-					shutil.copyfile(orig_path,self.config_file)
-					f.close()
-					ret={"status":True,"code":HolidayListManager.IMPORT_PROCESS_SUCESSFUL,"info":""}
-				else:
-					ret={"status":False,"code":HolidayListManager.IMPORT_BLOCK_ERROR,"info":""}
-	
-			except Exception as e:
-				ret={"status":False,"code":HolidayListManager.IMPORT_PROCESS_ERROR,"info":str(e)}
-		else:
+		if not os.path.exists(orig_path):
 			ret={"status":False,"code":HolidayListManager.IMPORT_FILE_EXITS_ERROR,"info":""}
-		
+			return n4d.responses.build_successful_call_response(ret)
+
+		if os.path.exists(self.block_file):
+			ret={"status":False,"code":HolidayListManager.IMPORT_BLOCK_ERROR,"info":""}
+			return n4d.responses.build_successful_call_response(ret)
+
+		try:
+			with open(orig_path,'r',encoding="utf-8") as fd:
+				json.load(fd)
+
+			shutil.copyfile(orig_path,self.config_file)
+			ret={"status":True,"code":HolidayListManager.IMPORT_PROCESS_SUCESSFUL,"info":""}
+
+		except Exception as e:
+			ret={"status":False,"code":HolidayListManager.IMPORT_PROCESS_ERROR,"info":str(e)}
+	
 		return n4d.responses.build_successful_call_response(ret)
-			
 
 	#def import_holiday_list	
 
 	def export_holiday_list(self,user,dest_path):
 
-		try:
-			if os.path.exists(self.config_file):
-				shutil.copy2(self.config_file,dest_path)
-				
-				ret={"status":True,"code":HolidayListManager.EXPORT_PROCESS_SUCCESSFUL,"info":""}
+		if not os.path.exists(self.config_file):
+			ret={"status":False,"code":HolidayListManager.EXPORT_PROCESS_ERROR,"info":str(e)}
+			return n4d.responses.build_successful_call_response(ret)
 
+		try:
+			shutil.copy2(self.config_file,dest_path)
+			ret={"status":True,"code":HolidayListManager.EXPORT_PROCESS_SUCCESSFUL,"info":""}
+		
 		except Exception as e:		
 			ret={"status":False,"code":HolidayListManager.EXPORT_PROCESS_ERROR,"info":str(e)}
+			return n4d.responses.build_successful_call_response(ret)
 
-		if ret['status']:
-			cmd='chown -R '+user+":nogroup " + dest_path
-			os.system(cmd)
+		if ret.get("status"):
+			try:
+				subprocess.run(["chown","-R",f"{user}:nogroup",dest_path])
+			except subprocess.CalledProcessError as e:
+				pass		
 		
 		return n4d.responses.build_successful_call_response(ret)
 
@@ -178,59 +181,68 @@ class HolidayListManager:
 
 	def is_holiday(self,day):
 
-		holiday_days=[]
-		if os.path.exists(self.config_file):
-			ret=self.read_conf()
-			if ret['return']['status']:
-				for item in self.holiday_list:
-					tmp_list=[]
-					if "-" in item:
-						tmp_list=self._get_days_inrange(item)
-						holiday_days=holiday_days+tmp_list
-					else:
-						holiday_days.append(item)
+		if not getattr(self,'holiday_list',None):
+			if os.path.exists(self.config_file):
+				try:
+					with open(self.config_file,'r',encoding="utf-8") as fd:
+						self.holiday_list=json.load(fd)
+				except Exception as e:
+					self.holiday_list={}
+			else:
+				self.holiday_list={}
 
-		if day in holiday_days:
-			ret={"status":True,"code":"","info":""}
-		else:
-			ret={"status":False,"code":"","info":""}
+		holiday_days=set()
 
+		for item in self.holiday_list:
+			if "-" in item:
+				days_inrange=self._get_days_inrange(item)
+				holiday_days.update(days_inrange)
+			else:
+				holiday_days.add(item)
+
+		is_present=day in holiday_days
+
+		ret={
+			"status":is_present,
+			"code":"",
+			"info":""
+		}
+		
 		return n4d.responses.build_successful_call_response(ret)
-
 
 	#def is_holiday	
 
 	def _get_days_inrange(self,day):	
 
-		listDays=[]
-		if day!="":
-			if "-" in day:
-				tmp=day.split("-")
-				date1=datetime.strptime(tmp[0],'%d/%m/%Y')
-				date2=datetime.strptime(tmp[1],'%d/%m/%Y')
-			else:
-				date1=datetime.strptime(day,'%d/%m/%Y')
-				date2=date1
-			delta=date2-date1
-			for i in range(delta.days + 1):
-				tmpDay=(date1 + timedelta(days=i)).strftime('%d/%m/%Y')
-				listDays.append(tmpDay)
+		if not day:
+			return []
 
-		return listDays	
+		tmpDay=day.split("-")
+		date1=datetime.strptime(tmpDay[0],'%d/%m/%Y')
+		date2=datetime.strptime(tmpDay[1],'%d/%m/%Y') if len(tmpDay)>1 else date1
+
+		delta=date2-date1
+
+		return [(date1 + timedelta(days=i)).strftime('%d/%m/%Y') for i in range(delta.days + 1)]
+	
 
 	#def _get_days_inrange
 
 	def are_days_configured(self):
 
 		are_days=False
-		if os.path.exists(self.config_file):
-			try:
-				with open(self.config_file,'r') as fd:
-					data=json.load(fd)
-				if data:
-					are_days=True
-			except:
-				pass
+		
+		if getattr(self,'holiday_list',None):
+			are_days=True
+		else:
+			if os.path.exists(self.config_file):
+				try:
+					with open(self.config_file,'r') as fd:
+						data=json.load(fd)
+					
+					are_days=bool(data)
+				except Exception as e:
+					pass
 
 		ret={"status":are_days,"code":"","data":""}
 
