@@ -69,7 +69,7 @@ Popup {
                     initDate:rangeDate.checked?day1Entry.text:dayEntry.text
                     endDate:rangeDate.checked?day2Entry.text:""
                     rangeDate:rangeDate.checked
-                    daysInRange:holidayStackBridge.daysInRange
+                    daysInRange:holidayStackBridge.dateToLoad.daysInRange
                     currentMonth:new Date().getMonth()
                     currentYear:new Date().getFullYear()
                     fullMonth:new Date().toLocaleString(Qt.locale(),'MMMM').split(" ").slice(-1)[0]
@@ -113,7 +113,7 @@ Popup {
 
                 RadioButton{
                     id:singleDate
-                    checked:!holidayStackBridge.dateRangeOption
+                    checked:holidayStackBridge.dateToLoad.rangeOption
                     text:i18nd("holiday-manager","Day:")
                     ButtonGroup.group:dateOptionsGroup
                             
@@ -138,7 +138,7 @@ Popup {
 
                 RadioButton{
                     id:rangeDate
-                    checked:holidayStackBridge.dateRangeOption
+                    checked:holidayStackBridge.dateToLoad.rangeOption
                     text:i18nd("holiday-manager","From:")
                     ButtonGroup.group:dateOptionsGroup
                             
@@ -214,7 +214,7 @@ Popup {
                         }else{
                             tmpValue=dayEntry.text
                         }
-                        holidayStackBridge.applyDateChanges([tmpValue,descriptionEntry.text])
+                        holidayStackBridge.applyDateChanges({"value":tmpValue,"description":descriptionEntry.text})
                     }
                 }
             }
@@ -267,15 +267,15 @@ Popup {
 
         calendar.startDate=undefined
         calendar.stopDate=undefined
-        calendar.daysInRange=holidayStackBridge.daysInRange
-        rangeDate.checked=holidayStackBridge.dateRangeOption
+        calendar.daysInRange=holidayStackBridge.dateToLoad.daysInRange
+        rangeDate.checked=holidayStackBridge.dateToLoad.rangeOption
         messageLabel.visible=false
         messageLabel.text=""
 
         var newDate=new Date()
-        var days=holidayStackBridge.daysInRange
+        var days=holidayStackBridge.dateToLoad.daysInRange
 
-        if (holidayStackBridge.dateRangeOption){
+        if (holidayStackBridge.dateToLoad.rangeOption){
             dayEntry.text=""
             
             if (days.length>0){
@@ -298,7 +298,7 @@ Popup {
             }
         }
 
-        descriptionEntry.text=holidayStackBridge.dateDescription
+        descriptionEntry.text=holidayStackBridge.dateToLoad.description
         calendar.initDate=rangeDate.checked?day1Entry.text:dayEntry.text
         calendar.endDate=rangeDate.checked?day2Entry.text:"";
         calendar.currentMonth=newDate.getMonth()

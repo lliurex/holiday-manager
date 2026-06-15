@@ -26,10 +26,10 @@ Rectangle{
         enabled:true
         Kirigami.InlineMessage {
             id: messageLabel
-            visible:holidayStackBridge.showMainMessage[0]
-            text:getTextMessage(holidayStackBridge.showMainMessage[1])
+            visible:holidayStackBridge.showMainMessage.show
+            text:getTextMessage(holidayStackBridge.showMainMessage.msgCode)
             type:getTypeMessage(
-            holidayStackBridge.showMainMessage[2])
+            holidayStackBridge.showMainMessage.type)
             Layout.minimumWidth:650
             Layout.fillWidth:true
             Layout.topMargin: 40
@@ -108,7 +108,7 @@ Rectangle{
             Layout.preferredHeight:40
             enabled:holidayStackBridge.enableGlobalOptions
             Layout.rightMargin:rectLayout.width-(backupBtn.width+deleteBtn.width+newBtn.width+30)
-            onClicked:holidayStackBridge.removeDate([true])
+            onClicked:holidayStackBridge.removeDate({"removeAll":true,"dateToRemove":""})
         }            
         Button {
             id:newBtn
@@ -135,13 +135,13 @@ Rectangle{
         id:removeDateDialog
         dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
         dialogMsg:{
-            if (holidayStackBridge.showRemoveDateDialog[1]){
+            if (holidayStackBridge.showRemoveDateDialog.removeAll){
                 i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
             }else{
                 i18nd("holiday-manager","The holiday will be deleted.\nDo yo want to continue?")
             }
         }
-        dialogVisible:holidayStackBridge.showRemoveDateDialog[0]
+        dialogVisible:holidayStackBridge.showRemoveDateDialog.show
         dialogWidth:300
         btnAcceptVisible:false
         btnAcceptText:""
@@ -211,69 +211,55 @@ Rectangle{
     function getTextMessage(msgCode){
         switch (msgCode){
             case -1:
-                var msg=i18nd("holiday-manager","Unabled to apply changes. List blocked for other user")
-                break;
+                return i18nd("holiday-manager","Unabled to apply changes. List blocked for other user")
             case -3:
-                var msg=i18nd("holiday-manager","Error saving changes")
-                break;
+                return i18nd("holiday-manager","Error saving changes")
             case -5:
-                var msg=i18nd("holiday-manager","Unabled to load holidays list")
-                break;
+                return i18nd("holiday-manager","Unabled to load holidays list")
             case -7:
-                var msg=i18nd("holiday-manager","Unabled to import list. List blocked for other user")
-                break;
+                return i18nd("holiday-manager","Unabled to import list. List blocked for other user")
             case -8:
-                var msg=i18nd("holiday-manager","Error importing the list of holidays")
-                break;
+                return i18nd("holiday-manager","Error importing the list of holidays")
             case -9:
-                var msg=i18nd("holiday-manager","The list of holidays to be imported does not exist")
-                break;
+                return i18nd("holiday-manager","The list of holidays to be imported does not exist")
             case -11:
-                var msg=i18nd("holiday-manager","Error exporting the list of holidays")
-                break;
+                return i18nd("holiday-manager","Error exporting the list of holidays")
             case 2:
-                var msg=i18nd("holiday-manager","Changes apply succesfully")
-                break;
+                return i18nd("holiday-manager","Changes apply succesfully")
             case 3:
-                var msg=i18nd("holiday-manager","The list of holidays alreday removed. Nothing to do")
-                break;
+                return i18nd("holiday-manager","The list of holidays alreday removed. Nothing to do")
             case 5:
-                var msg=i18nd("holiday-manager","Holiday added successfully")
-                break;
+                return i18nd("holiday-manager","Holiday added successfully")
             case 6:
-                var msg=i18nd("holiday-manager","List of holidays imported successfully")
-                break;
+                return i18nd("holiday-manager","List of holidays imported successfully")
             case 7:
-                var msg=i18nd("holiday-manager","Holiday edited successfully")
-                break;
+                return i18nd("holiday-manager","Holiday edited successfully")
             case 10:
-                var msg=i18nd("holiday-manager","List of holidays exported successfully")
-                break;
+                return i18nd("holiday-manager","List of holidays exported successfully")
             case 11:
-                var msg=i18nd("holiday-manager","Holiday deleted successfully")
-                break;
+                return i18nd("holiday-manager","Holiday deleted successfully")
             case 12:
-                var msg=i18nd("holiday-manager","The list of holidays deleted successfully")
-                break;
+                return i18nd("holiday-manager","The list of holidays deleted successfully")
             default:
-                var msg=""
-                break;
+                return ""
         }
         return msg
     } 
 
     function getTypeMessage(msgType){
 
-        switch (msgType){
-            case "Information":
-                return Kirigami.MessageType.Information
-            case "Ok":
+        switch(msgType){
+            case 0:
                 return Kirigami.MessageType.Positive
-            case "Error":
+            case 1:
                 return Kirigami.MessageType.Error
-            case "Warning":
+            case 2:
                 return Kirigami.MessageType.Warning
+            case 3:
+            default:
+                return Kirigami.MessageType.Information
         }
     }
+
 
 } 
