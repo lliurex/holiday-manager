@@ -8,75 +8,72 @@ import org.kde.kirigami as Kirigami
 Rectangle{
     id:rectLayout
     color:"transparent"
-    Text{ 
-        text:i18nd("holiday-manager","Configured holiday")
-        font.pointSize: 16
-    }
 
-    property var backupAction:undefined
-
-    GridLayout{
+    ColumnLayout{
         id:generalHolidaysLayout
-        rows:2
-        flow: GridLayout.TopToBottom
-        rowSpacing:10
+        anchors.top:parent.top
         anchors.left:parent.left
-        width:parent.width-10
-        height:parent.height-90
-        enabled:true
+        anchors.right:parent.right
+        anchors.bottom:btnBox.top
+
+        anchors.leftMargin:5
+        anchors.rightMargin:15
+        anchors.bottomMargin:25
+        spacing: 10
+
+        property var backupAction:undefined
+
+        Text{ 
+            text:i18nd("holiday-manager","Configured holiday")
+            font.pointSize: 16
+        }
+
         Kirigami.InlineMessage {
             id: messageLabel
             visible:holidayStackBridge.showMainMessage.show
             text:getTextMessage(holidayStackBridge.showMainMessage.msgCode)
             type:getTypeMessage(
             holidayStackBridge.showMainMessage.type)
-            Layout.minimumWidth:650
             Layout.fillWidth:true
-            Layout.topMargin: 40
         }
 
-        GridLayout{
-            id: optionsGrid
-            rows: 1
-            flow: GridLayout.TopToBottom
-            rowSpacing:10
-            Layout.topMargin: messageLabel.visible?0:80
-            
-            HolidayList{
-                id:holidayList
-                holidayModel:holidayStackBridge.holidayModel
-                Layout.fillHeight:true
-                Layout.fillWidth:true
-            }
+        HolidayList{
+            id:holidayList
+            holidayModel:holidayStackBridge.holidayModel
+            Layout.fillHeight:true
+            Layout.fillWidth:true
         }
     }
+
     RowLayout{
         id:btnBox
         anchors.bottom: parent.bottom
-        anchors.fill:parent.fill
-        anchors.bottomMargin:15
-        spacing:10
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin:5
+        anchors.topMargin:20
+        anchors.margins:15
+        spacing: 30
 
         Button {
             id:backupBtn
             visible:true
             display:AbstractButton.TextBesideIcon
-            icon.name:"backup.svg"
+            icon.name:"backup"
             text:i18nd("holiday-manager","Backup")
-            Layout.preferredHeight:40
             onClicked:backupMenu.open()
             
             Menu{
                 id:backupMenu
-                y: -backupBtn.height*1.7
+                y: -height - 5
                 x: backupBtn.width/2
 
                 MenuItem{
-                    icon.name:"document-export.svg"
+                    icon.name:"document-export"
                     text:i18nd("holiday-manager","Generate backup")
                     enabled:holidayStackBridge.enableGlobalOptions
                     onClicked:{
-                        backupAction="export"
+                        generalHolidaysLayout.backupAction="export"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to save holidays list")
                         backupFileDialog.fileMode=FileDialog.SaveFile
                         backupFileDialog.open()
@@ -84,12 +81,12 @@ Rectangle{
                 }
 
                 MenuItem{
-                    icon.name:"document-import.svg"
+                    icon.name:"document-import"
                     text:i18nd("holiday-manager","Import backup")
                     onClicked:{
-                        backupAction="import"
+                        generalHolidaysLayout.backupAction="import"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to load holidays list")
-			backupFileDialog.fileMode=FileDialog.OpenFile
+                        backupFileDialog.fileMode=FileDialog.OpenFile
                         importDatesDialog.open()
 
                     }
@@ -99,27 +96,28 @@ Rectangle{
            
         }
 
-       Button {
-            id:deleteBtn
-            visible:true
-            display:AbstractButton.TextBesideIcon
-            icon.name:"delete.svg"
-            text:i18nd("holiday-manager","Delete holidays list")
-            Layout.preferredHeight:40
-            enabled:holidayStackBridge.enableGlobalOptions
-            Layout.rightMargin:rectLayout.width-(backupBtn.width+deleteBtn.width+newBtn.width+30)
-            onClicked:holidayStackBridge.removeDate({"removeAll":true,"dateToRemove":""})
-        }            
+        Button {
+                id:deleteBtn
+                visible:true
+                display:AbstractButton.TextBesideIcon
+                icon.name:"delete"
+                text:i18nd("holiday-manager","Delete holidays list")
+                enabled:holidayStackBridge.enableGlobalOptions
+                onClicked:holidayStackBridge.removeDate({"removeAll":true,"dateToRemove":""})
+        } 
+
+        Item{
+            Layout.fillWidth:true
+        }
+           
+        
         Button {
             id:newBtn
             visible:true
             display:AbstractButton.TextBesideIcon
-            icon.name:"list-add.svg"
+            icon.name:"list-add"
             text:i18nd("holiday-manager","New holiday")
-            Layout.preferredHeight:40
-            onClicked:{
-                holidayStackBridge.addNewDate()
-            }
+            onClicked:holidayStackBridge.addNewDate()
         }
     }
     
@@ -133,14 +131,11 @@ Rectangle{
 
     ChangesDialog{
         id:removeDateDialog
-        dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
-        dialogMsg:{
-            if (holidayStackBridge.showRemoveDateDialog.removeAll){
-                i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
-            }else{
-                i18nd("holiday-manager","The holiday will be deleted.\nDo yo want to continue?")
-            }
-        }
+        dialogIcon:"dialog-warning"
+        dialogMsg:holidayStackBridge.showRemoveDateDialog.removeAll
+                ?i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
+                :i18nd("holiday-manager","The holiday will be deleted.\nDo yo want to continue?")
+        
         dialogVisible:holidayStackBridge.showRemoveDateDialog.show
         dialogWidth:300
         btnAcceptVisible:false
@@ -164,7 +159,7 @@ Rectangle{
 
     ChangesDialog{
         id:importDatesDialog
-        dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
+        dialogIcon:"dialog-warning"
         dialogMsg:i18nd("holiday-manager","New holidays list will be loaded and replace the existing configutation.\nDo you want to continue?")
         dialogWidth:600
         btnAcceptVisible:false
@@ -195,7 +190,7 @@ Rectangle{
             var selectedPath=""
             selectedPath=backupFileDialog.selectedFile.toString()
             selectedPath=selectedPath.replace(/^(file:\/{2})/,"")
-            switch(backupAction){
+            switch(generalHolidaysLayout.backupAction){
                 case "export":
                     holidayStackBridge.exportDatesConfig(selectedPath)
                     break;

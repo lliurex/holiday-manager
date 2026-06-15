@@ -1,12 +1,13 @@
 import QtQuick
 import QtQuick.Controls
-import QtQml.Models
-import org.kde.plasma.components as Components
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 
 
-Components.ItemDelegate{
+ItemDelegate{
 
     id: listDateItem
+
     property string dateId
     property string dateType
     property string dateDescription
@@ -14,27 +15,46 @@ Components.ItemDelegate{
     height:65
     enabled:true
 
-    Item{
-        id: menuItem
-        height:visible?60:0
-        width:parent.width-manageDateBtn.width
+    width: listDateItem.ListView.view?listDateItem.ListView.view.width -10 : 0
+    hoverEnabled:true
 
-        MouseArea {
-            id: mouseAreaOption
-            anchors.fill: parent
-            hoverEnabled:true
-            propagateComposedEvents:true
+    leftPadding:10
+    rightPadding:10
 
-            onEntered: {
-                listDates.currentIndex=index
+    onHoveredChanged:{
+        if (hovered){
+            if (listDateItem.ListView.view && !optionsMenu.opened){
+                listDateItem.ListView.view.currentIndex=index
+            }
+        }else{
+            if (!optionsMenu.opened && listDateItem.ListView.view){
+                listDateItem.ListView.view.currentIndex=-1
             }
         }
+    }
 
+    background:Rectangle {
+        x:5
+        y:5
+        width:parent.width-5
+        height:parent.height-5
+        color: (listDateItem.hovered || listDateItem.ListView.isCurrentItem || optionsMenu.opened)
+               ?Qt.alpha(Kirigami.Theme.highlightColor,0.15)
+               :"transparent"
+        radius:6
+        border.width:1
+        border.color:(listDateItem.hovered || listDateItem.ListView.isCurrentItem || optionsMenu.opened)
+                      ?Kirigami.Theme.highlightColor
+                      :"transparent"
+    }
+
+    contentItem:RowLayout {
+        spacing:20
 
         Image{
             id:dateImage
-            width:48
-            height:48
+            Layout.preferredWidth:48
+            Layout.preferredHeight:48
             fillMode:Image.PreserveAspectFit
             source:{
                 if (dateType=="single"){
@@ -43,20 +63,15 @@ Components.ItemDelegate{
                     "/usr/lib/python3/dist-packages/holidaymanager/rsrc/calendar_range_day.png"
               }
             }
-	    anchors.left:parent.left
-            anchors.verticalCenter:parent.verticalCenter
-            anchors.leftMargin:10
-        }
+	    }
+        
         Text{
             id:dateText
             text:dateId
             font.pointSize: 10
             horizontalAlignment:Text.AlignLeft
+            Layout.alignment: Qt.AlignVCenter
             width:80
-            anchors.left:dateImage.right
-            anchors.leftMargin:20
-            anchors.verticalCenter:parent.verticalCenter
-
         }
 
         Text{
@@ -65,33 +80,29 @@ Components.ItemDelegate{
             font.pointSize: 10
             horizontalAlignment:Text.AlignLeft
             elide:Text.ElideMiddle
-            width:{
-                if (listDateItem.ListView.isCurretItem){
-                    parent.width-(dateImage.width+dateText.width+manageDateBtn.width+160)
-                }else{
-                  parent.width-(dateImage.width+dateText.width+160)
-                }
-            }
-            anchors.left:dateText.right
-            anchors.leftMargin:dateText.width+20
-            anchors.verticalCenter:parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth:true
         }
 
         Button{
             id:manageDateBtn
             display:AbstractButton.IconOnly
-            icon.name:"configure.svg"
-            anchors.leftMargin:15
-            anchors.left:descriptionText.right
-            anchors.verticalCenter:parent.verticalCenter
-            visible:listDateItem.ListView.isCurrentItem
+            icon.name:"configure"
+            Layout.alignment: Qt.AlignVCenter
+            visible:listDateItem.ListView.isCurrentItem || listDateItem.hovered || optionsMenu.opened
             ToolTip.delay: 1000
             ToolTip.timeout: 3000
             ToolTip.visible: hovered
             ToolTip.text:i18nd("holiday-manager","Click to manage the holiday")
             onClicked:optionsMenu.open();
-            onVisibleChanged:{
-                optionsMenu.close()
+            Connections{
+                target:listDates
+                function onCurrentIndexChanged(){
+                    if (!listDateItem.ListView.isCurrentItem && optionsMenu.opened){
+                        optionsMenu.close()
+                    }
+
+                }
             }
 
             Menu{
@@ -100,14 +111,14 @@ Components.ItemDelegate{
                 x:-(optionsMenu.width-manageDateBtn.width/2)
 
                 MenuItem{
-                    icon.name:"document-edit.svg"
+                    icon.name:"document-edit"
                     text:i18nd("holiday-manager","Edit holiday")
                     onClicked:{
                         holidayStackBridge.loadDate(dateId)
                     }
                 }
                 MenuItem{
-                    icon.name:"delete.svg"
+                    icon.name:"delete"
                     text:i18nd("holiday-manager","Delete the holiday")
                     onClicked:holidayStackBridge.removeDate({"removeAll":false,"dateToRemove":dateId})
                 }
