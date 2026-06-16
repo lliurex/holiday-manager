@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-27 14:38+0100\n"
-"PO-Revision-Date: 2025-11-27 14:39+0100\n"
+"POT-Creation-Date: 2026-06-16 11:05+0200\n"
+"PO-Revision-Date: 2026-06-16 11:06+0200\n"
 "Last-Translator: Pilar Embid Giner <embid_mar@gva.es>\n"
 "Language-Team: LliureX\n"
 "Language: es\n"
@@ -17,101 +17,100 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:53
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:62
 msgid "Loading. Wait a moment..."
 msgstr "S'està carregant. Espereu un moment..."
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:56
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:64
 msgid "Applying changes. Wait a moment..."
 msgstr "S'estan aplicant els canvis. Espereu un moment..."
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:59
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:66
 msgid "Exporting holidays configuration. Wait a moment..."
 msgstr "S'està exportant la configuració de festius. Espereu un moment..."
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:62
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:68
 msgid "Loading holidays configuration. Wait a moment..."
 msgstr "S'està carregant la configuració de festius. Espereu un moment..."
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:35
-#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:104
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:36
+#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:115
 msgid "Edit holiday"
 msgstr "Edita el festiu"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:123
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:117
 msgid "Day:"
 msgstr "Día:"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:146
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:142
 msgid "From:"
 msgstr "Del/De l':"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:161
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:159
 msgid "to:"
 msgstr "al/a l':"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:182
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:180
 msgid "Description:"
 msgstr "Descripció:"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:206
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:207
 msgid "Apply"
 msgstr "Aplica"
 
 #: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:227
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:151
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:175
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:146
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:170
 msgid "Cancel"
 msgstr "Cancel·la"
 
 #: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:244
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:249
 msgid "You must indicate the two dates of range"
 msgstr "Cal que indiqueu les dues dates de l'interval"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:254
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:252
 msgid "Last date in range must be major than init date"
 msgstr "L'última data de l'interval ha de ser posterior a la data inicial"
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:266
-msgid "You must indicate the date"
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:257
+msgid "You must indicate a date"
 msgstr "Cal que indiqueu la data"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:12
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:27
 msgid "Configured holiday"
 msgstr "Festius configurats"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:65
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:63
 msgid "Backup"
 msgstr "Còpia de seguretat"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:76
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:73
 msgid "Generate backup"
 msgstr "Genera còpia de seguretat"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:80
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:77
 msgid "Please choose a file to save holidays list"
 msgstr "Seleccioneu un fitxer per a guardar la llista de festius"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:88
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:85
 msgid "Import backup"
 msgstr "Importa còpia de seguretat"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:91
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:88
 msgid "Please choose a file to load holidays list"
 msgstr "Seleccioneu un fitxer per a carregar la llista de festius"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:107
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:104
 msgid "Delete holidays list"
 msgstr "Suprimeix la llista de festius"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:118
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:119
 msgid "New holiday"
 msgstr "Nou festiu"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:139
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:136
 msgid ""
 "The list of holidays will be deleted.\n"
 "Do yo want to continue?"
@@ -119,7 +118,7 @@ msgstr ""
 "La llista de festius actual s'eliminarà.\n"
 "Voleu continuar?"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:141
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:137
 msgid ""
 "The holiday will be deleted.\n"
 "Do yo want to continue?"
@@ -127,12 +126,12 @@ msgstr ""
 "El festiu s'eliminarà.\n"
 "Voleu continuar?"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:148
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:173
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:143
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:168
 msgid "Accept"
 msgstr "Accepta"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:168
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:163
 msgid ""
 "New holidays list will be loaded and replace the existing configutation.\n"
 "Do you want to continue?"
@@ -141,79 +140,76 @@ msgstr ""
 "existent.\n"
 "Voleu continuar?"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:214
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:209
 msgid "Unabled to apply changes. List blocked for other user"
 msgstr ""
 "No es poden aplicar els canvis. La llista està bloquejada per un altre usuari"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:217
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:211
 msgid "Error saving changes"
 msgstr "S'ha produït un error en guardar els canvis"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:220
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:213
 msgid "Unabled to load holidays list"
 msgstr "No es possible carregar la llista de festius"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:223
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:215
 msgid "Unabled to import list. List blocked for other user"
 msgstr ""
 "No es pot importar la llista. La llista està bloquejada per un altre usuari"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:226
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:217
 msgid "Error importing the list of holidays"
 msgstr "S'ha produït un error en importar la llista de festius"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:229
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:219
 msgid "The list of holidays to be imported does not exist"
 msgstr "La llista de festius que s'ha d'importar no existeix"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:232
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:221
 msgid "Error exporting the list of holidays"
 msgstr "S'ha produït un error en exportar la llista de festius"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:235
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:223
 msgid "Changes apply succesfully"
 msgstr "Els canvis s'han aplicat correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:238
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:225
 msgid "The list of holidays alreday removed. Nothing to do"
 msgstr "La llista de festius ja ha sigut eliminada. Res a fer"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:241
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:227
 msgid "Holiday added successfully"
 msgstr "El festiu s'ha afegit correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:244
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:229
 msgid "List of holidays imported successfully"
 msgstr "La llista de festius s'ha importat correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:247
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:231
 msgid "Holiday edited successfully"
 msgstr "El festiu s'ha editat correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:250
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:233
 msgid "List of holidays exported successfully"
 msgstr "La llista de festius s'ha exportat correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:253
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:235
 msgid "Holiday deleted successfully"
 msgstr "El festiu s'ha eliminat correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:256
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:237
 msgid "The list of holidays deleted successfully"
 msgstr "La llista de festius s'ha eliminat correctament"
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayList.qml:48
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayList.qml:46
 msgid "No holiday is configured"
 msgstr "Cap festiu configurat"
 
-#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:91
+#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:96
 msgid "Click to manage the holiday"
 msgstr "Feu clic per a gestionar el festiu"
 
-#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:111
+#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:122
 msgid "Delete the holiday"
 msgstr "Suprimeix el festiu"
-
-#~ msgid "Holiday List"
-#~ msgstr "Llista de festius"
