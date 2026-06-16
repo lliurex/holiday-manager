@@ -12,7 +12,7 @@ ItemDelegate{
     property string dateType
     property string dateDescription
 
-    height:65
+    height:70
     enabled:true
 
     width: listDateItem.ListView.view?listDateItem.ListView.view.width -10 : 0
