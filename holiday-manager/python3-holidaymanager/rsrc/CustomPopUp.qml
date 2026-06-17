@@ -4,67 +4,71 @@ import QtQuick.Layouts 1.15
 
 
 Popup {
-    id:popUpWaiting
-    width:570
-    height:80
+    id: popUpWaiting
+    width: 570
+    height: 100
     anchors.centerIn: Overlay.overlay
-    modal:true
-    focus:true
-    visible:!holidayStackBridge.closePopUp[0]
-    closePolicy:Popup.NoAutoClose
+    modal: true
+    focus: true
+    visible: holidayStackBridge.showPopUp.show
+    closePolicy: Popup.NoAutoClose
 
-    GridLayout{
-        id: popupGrid
-        rows: 2
-        flow: GridLayout.TopToBottom
-        anchors.centerIn:parent
+    background: Rectangle {
+        color: palette.window
+        border.color: palette.mid
+        radius: 4
+    }
 
+    ColumnLayout {
+        anchors.centerIn: parent
+        spacing: 10
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.alignment:Qt.AlignHCenter
-            Rectangle{
-                color:"transparent"
-                width:30
-                height:30
-                AnimatedImage{
-                    source: "/usr/lib/python3/dist-packages/bellscheduler/rsrc/loading.gif"
-                    transform: Scale {xScale:0.45;yScale:0.45}
-                }
+        Image{
+            id:spinnerImage
+            source: "/usr/lib/python3/dist-packages/holidaymanager/rsrc/loading.png"
+            Layout.preferredWidth: 24
+            Layout.preferredHeight: 24
+            Layout.alignment: Qt.AlignHCenter
+            fillMode: Image.PreserveAspectFit
+            smooth:false
+            antialiasing:false
+
+            rotation:0
+        }
+            
+        Timer{
+            id:rotationTimer
+            running:(spinnerImage!==null && popUpWaiting!==null) && spinnerImage.visible && popUpWaiting.visible
+            repeat:true
+            interval:100
+
+            onTriggered:{
+                spinnerImage.rotation=(spinnerImage.rotation+330)%360
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.alignment:Qt.AlignHCenter
-
-            Text{
-                id:popupText
-                text:getTextMessage()
-                font.pointSize: 10
-                Layout.alignment:Qt.AlignHCenter
-            }
+        Text {
+            id: popupText
+            text: getTextMessage()
+            font.pointSize: 10
+            color: palette.windowText
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 
     function getTextMessage(){
-        switch (holidayStackBridge.closePopUp[1]){
+        switch (holidayStackBridge.showPopUp.msgCode){
             case 1:
-                var msg=i18nd("holiday-manager","Loading. Wait a moment...");
-                break;
+                return i18nd("holiday-manager","Loading. Wait a moment...");
             case 2:
-                var msg=i18nd("holiday-manager","Applying changes. Wait a moment...")
-                break;
+                return i18nd("holiday-manager","Applying changes. Wait a moment...")
             case 3:
-                var msg=i18nd("holiday-manager","Exporting holidays configuration. Wait a moment...")
-                break;
+                return i18nd("holiday-manager","Exporting holidays configuration. Wait a moment...")
             case 4:
-                var msg=i18nd("holiday-manager","Loading holidays configuration. Wait a moment...")
-                break;
+                return i18nd("holiday-manager","Loading holidays configuration. Wait a moment...")
             default:
-                var msg=""
-                break;
+                return ""
         }
-        return msg
     }
 }
