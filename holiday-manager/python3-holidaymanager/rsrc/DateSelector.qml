@@ -68,6 +68,7 @@ Popup {
                     stopDate:undefined
                     initDate:rangeDate.checked?day1Entry.text:dayEntry.text
                     endDate:rangeDate.checked?day2Entry.text:""
+                    selectedDate:new Date()
                     rangeDate:rangeDate.checked
                     daysInRange:holidayStackBridge.dateToLoad.daysInRange
 
@@ -299,6 +300,6 @@ Popup {
         descriptionEntry.text=holidayStackBridge.dateToLoad.description
         calendar.initDate=rangeDate.checked?day1Entry.text:dayEntry.text
         calendar.endDate=rangeDate.checked?day2Entry.text:"";
+        calendar.selectedDate=newDate
     }
-
 }

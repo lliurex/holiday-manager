@@ -44,7 +44,7 @@ Rectangle {
 
                 readonly property color sameMonthDateTextColor: "#444"
                 readonly property color selectedDateColor: "#3778d0"
-                readonly property color selectedDateTextColor: "white"
+                readonly property color selectedDateTextColor: "#444"
                 readonly property color differentMonthDateTextColor: "#bbb"
                 readonly property color invalidDatecolor: "#dddddd"
                 property var dateOnFocus: styleData.date

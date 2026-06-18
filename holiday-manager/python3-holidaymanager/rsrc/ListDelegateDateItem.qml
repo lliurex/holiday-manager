@@ -22,14 +22,12 @@ ItemDelegate{
     rightPadding:10
 
     onHoveredChanged:{
-        if (hovered){
-            if (listDateItem.ListView.view && !optionsMenu.opened){
+        if (listDateItem.ListView.view){
+            if (hovered && !optionsMenu.opened){
                 listDateItem.ListView.view.currentIndex=index
             }
-        }else{
-            if (!optionsMenu.opened && listDateItem.ListView.view){
-                listDateItem.ListView.view.currentIndex=-1
-            }
+        }else if (!hovered && !optionsMenu.opened && listDateItem.ListView.view.currentIndex===index){
+            listDateItem.ListView.view.currentIndex=-1
         }
     }
 
@@ -38,7 +36,7 @@ ItemDelegate{
         y:5
         width:parent.width-5
         height:parent.height-5
-        color: (listDateItem.hovered || listDateItem.ListView.isCurrentItem || optionsMenu.opened)
+        color: (listDateItem.hovered || optionsMenu.opened)
                 ?Qt.hsla(Kirigami.Theme.highlightColor.hslHue, 
                  Kirigami.Theme.highlightColor.hslSaturation, 
                  Kirigami.Theme.highlightColor.hslLightness, 
@@ -46,7 +44,7 @@ ItemDelegate{
                 :"transparent"
         radius:6
         border.width:1
-        border.color:(listDateItem.hovered || listDateItem.ListView.isCurrentItem || optionsMenu.opened)
+        border.color:(listDateItem.hovered || optionsMenu.opened)
                       ?Kirigami.Theme.highlightColor
                       :"transparent"
     }
@@ -92,7 +90,7 @@ ItemDelegate{
             display:AbstractButton.IconOnly
             icon.name:"configure"
             Layout.alignment: Qt.AlignVCenter
-            visible:listDateItem.ListView.isCurrentItem || listDateItem.hovered || optionsMenu.opened
+            visible:listDateItem.hovered || optionsMenu.opened
             ToolTip.delay: 1000
             ToolTip.timeout: 3000
             ToolTip.visible: hovered
