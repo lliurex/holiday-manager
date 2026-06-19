@@ -20,185 +20,190 @@ Popup {
     }
     background:Rectangle{
         color:"#ebeced"
+        border.color:"#b8b9ba"
+        border.width:1
+        radius:5.0
+
     }
 
-    contentItem:Rectangle{
+    contentItem:ColumnLayout{
         id:container
-        width:dateSelectorPopUp.width
-        height:dateSelectorPopUp.height
-        color:"transparent"
+        anchors.fill:parent
+        anchors.margins:15
+        spacing:12
+
         Text{ 
             text:i18nd("holiday-manager","Edit holiday")
             font.pointSize: 16
+            Layout.fillWidth:true
         }
-        GridLayout{
-            id:dateSelectorLayout
-            rows:3
-            flow: GridLayout.TopToBottom
-            rowSpacing:15
-            anchors.left:parent.left
-            anchors.bottomMargin:20
-            anchors.horizontalCenter:parent.horizontalCenter
-            enabled:true
-           
+
+        ColumnLayout{
+            id:centerArea
+            Layout.fillWidth:true
+            Layout.fillHeight:true
+            Layout.bottomMargin:10
+            spacing:10
+
             Kirigami.InlineMessage {
                 id: messageLabel
                 visible:false
                 text:""
                 type: Kirigami.MessageType.Error
-                Layout.preferredWidth:505
-                Layout.topMargin: 40
+                Layout.fillWidth:true
             }
 
-            Calendar{
-                id:calendar
+            Item{
                 Layout.alignment:Qt.AlignHCenter
-                Layout.preferredWidth:325
-                Layout.topMargin: messageLabel.visible?0:50
-                calendarLocale:holidayStackBridge.systemLocale
-                startDate:undefined
-                stopDate:undefined
-                initDate:{
-                    if (rangeDate.checked){
-                        day1Entry.text
-                    }else{
-                        dayEntry.text
-                    }
-                }
-                endDate:{
-                    if (rangeDate.checked){
-                        day2Entry.text
-                    }else{
-                        ""
-                    }
-                }
-                rangeDate:rangeDate.checked
-                daysInRange:holidayStackBridge.daysInRange
-                selectedDate:new Date()
-                Connections{
-                    target:calendar
-                    function onGetSelectedDate(info){
-                        if (rangeDate.checked){
-                            if (info[1]=="start"){
-                                day1Entry.text=info[0]
-                                day2Entry.text=""
+                Layout.fillWidth:true
+                Layout.preferredHeight:250
+
+                Calendar{
+                    id:calendar
+                    width:325
+                    height:parent.height
+                    anchors.horizontalCenter:parent.horizontalCenter
+                    calendarLocale:holidayStackBridge.systemLocale
+                    startDate:undefined
+                    stopDate:undefined
+                    initDate:rangeDate.checked?day1Entry.text:dayEntry.text
+                    endDate:rangeDate.checked?day2Entry.text:""
+                    selectedDate:new Date()
+                    rangeDate:rangeDate.checked
+                    daysInRange:holidayStackBridge.dateToLoad.daysInRange
+
+                    Connections{
+                        target:calendar
+                        function onGetSelectedDate(info){
+                            if (rangeDate.checked){
+                                if (info[1]=="start"){
+                                    day1Entry.text=info[0]
+                                    day2Entry.text=""
+                                }else{
+                                    day2Entry.text=info[0]
+                                }
+                                dayEntry.text=""
                             }else{
-                                day2Entry.text=info[0]
+                                dayEntry.text=info[0]
+                                day1Entry.text=""
+                                day2Entry.text=""
+                                calendar.startDate=undefined
                             }
-                            dayEntry.text=""
-                        }else{
-                            dayEntry.text=info[0]
-                            day1Entry.text=""
-                            day2Entry.text=""
-                            calendar.startDate=undefined
                         }
                     }
                 }
+
             }
+        }
             
-            GridLayout{
-                id: dateOptions
-                rows:3
-                flow: GridLayout.TopToBottom
-                rowSpacing:5
+        ColumnLayout{
+            id: dateOptions
+            Layout.fillWidth:true
+            spacing:10
+
+            ButtonGroup{
+                id:dateOptionsGroup
+            }
+                
+            RowLayout{
+                id:singleRow
+                spacing:10
                 Layout.fillWidth:true
-                ButtonGroup{
-                    id:dateOptionsGroup
+
+                RadioButton{
+                    id:singleDate
+                    checked:!holidayStackBridge.dateToLoad.rangeOption
+                    text:i18nd("holiday-manager","Day:")
+                    ButtonGroup.group:dateOptionsGroup
+                            
                 }
                 
-                RowLayout{
-                    id:singleRow
-                    spacing:10
-                    Layout.alignment:Qt.AlignLeft
-                    Layout.bottomMargin:10
-                    RadioButton{
-                        id:singleDate
-                        checked:!holidayStackBridge.dateRangeOption
-                        text:i18nd("holiday-manager","Day:")
-                        ButtonGroup.group:dateOptionsGroup
+                TextField{
+                    id:dayEntry 
+                    font.pointSize: 10
+                    horizontalAlignment:TextInput.AlignHCenter
+                    readOnly:true
+                    Layout.preferredWidth:100
+                    enabled:singleDate.checked
+                        
+                }
+
+            }
+            
+            RowLayout{
+                id:rangeRow
+                spacing:10
+                Layout.fillWidth:true
+
+                RadioButton{
+                    id:rangeDate
+                    checked:holidayStackBridge.dateToLoad.rangeOption
+                    text:i18nd("holiday-manager","From:")
+                    ButtonGroup.group:dateOptionsGroup
                             
-                    }
-                    TextField{
-                        id:dayEntry 
-                        font.pointSize: 10
-                        horizontalAlignment:TextInput.AlignHCenter
-                        readOnly:true
-                        Layout.preferredWidth:100
-                        enabled:singleDate.checked?true:false
+                }
+                
+                TextField{
+                    id:day1Entry 
+                    font.pointSize: 10
+                    horizontalAlignment:TextInput.AlignHCenter
+                    readOnly:true
+                    Layout.preferredWidth:100
+                    enabled:rangeDate.checked
                         
                     }
 
+                Text{
+                    id:day2Text
+                    text:i18nd("holiday-manager","to:")
                 }
-                RowLayout{
-                    id:rangeRow
-                    spacing:10
-                    Layout.alignment:Qt.AlignLeft
-                    Layout.bottomMargin:10
-                    RadioButton{
-                        id:rangeDate
-                        checked:holidayStackBridge.dateRangeOption
-                        text:i18nd("holiday-manager","From:")
-                        ButtonGroup.group:dateOptionsGroup
-                            
-                    }
-                    TextField{
-                        id:day1Entry 
-                        font.pointSize: 10
-                        horizontalAlignment:TextInput.AlignHCenter
-                        readOnly:true
-                        Layout.preferredWidth:100
-                        enabled:rangeDate.checked?true:false
-                        
-                    }
-                    Text{
-                        id:day2Text
-                        text:i18nd("holiday-manager","to:")
-                    }
-                    TextField{
-                        id:day2Entry 
-                        font.pointSize: 10
-                        horizontalAlignment:TextInput.AlignHCenter
-                        readOnly:true
-                        Layout.preferredWidth:100
-                        enabled:rangeDate.checked?true:false
-                    
-                    }
+                
+                TextField{
+                    id:day2Entry 
+                    font.pointSize: 10
+                    horizontalAlignment:TextInput.AlignHCenter
+                    readOnly:true
+                    Layout.preferredWidth:100
+                    enabled:rangeDate.checked
+                }
         
-                }
-                RowLayout{
-                    id:descriptionRow
-                    spacing:10
-                    Layout.alignment:Qt.AlignLeft
-                    Layout.bottomMargin:10
+            }
+            
+            RowLayout{
+                id:descriptionRow
+                spacing:10
+                Layout.fillWidth:true
 
-                    Text{
-                        id:descriptionText
-                        text:i18nd("holiday-manager","Description:")
-                    }
-                    TextField{
-                        id:descriptionEntry 
-                        font.pointSize: 10
-                        horizontalAlignment:TextInput.AlignHLeft
-                        Layout.preferredWidth:250
-                    }
+                Text{
+                    id:descriptionText
+                    text:i18nd("holiday-manager","Description:")
+                }
+                
+                TextField{
+                    id:descriptionEntry 
+                    font.pointSize: 10
+                    horizontalAlignment:TextInput.AlignHLeft
+                    Layout.preferredWidth:250
                 }
             }
-
         }
+
+        Item {
+            Layout.fillHeight:true
+        }
+
         RowLayout{
             id:btnBox
-            anchors.bottom:parent.bottom
-            anchors.right:parent.right
-            anchors.topMargin:10
-            spacing:10
+            Layout.fillWidth:true
+            Layout.alignment:Qt.AlignRight
+            spacing:12
 
             Button {
                 id:applyBtn
                 visible:true
                 display:AbstractButton.TextBesideIcon
-                icon.name:"dialog-ok.svg"
+                icon.name:"dialog-ok"
                 text:i18nd("holiday-manager","Apply")
-                Layout.preferredHeight:40
                 enabled:true
                 onClicked:{
                     if (validateDates()){
@@ -208,7 +213,7 @@ Popup {
                         }else{
                             tmpValue=dayEntry.text
                         }
-                        holidayStackBridge.applyDateChanges([tmpValue,descriptionEntry.text])
+                        holidayStackBridge.applyDateChanges({"value":tmpValue,"description":descriptionEntry.text})
                     }
                 }
             }
@@ -217,9 +222,8 @@ Popup {
                 id:cancelBtn
                 visible:true
                 display:AbstractButton.TextBesideIcon
-                icon.name:"dialog-cancel.svg"
+                icon.name:"dialog-cancel"
                 text:i18nd("holiday-manager","Cancel")
-                Layout.preferredHeight: 40
                 enabled:true
                 onClicked:{
                     holidayStackBridge.closeDateForm()
@@ -230,79 +234,72 @@ Popup {
 
         }
     }
-    function validateDates(){
+
+     function validateDates(){
 
         if (rangeDate.checked){
-            if ((day1Entry.text=="")&&(day2Entry.text="")){
+            if (day2Entry.text===""){
                 messageLabel.visible=true
                 messageLabel.text=i18nd("holiday-manager","You must indicate the two dates of range")
-                return false         
-            }else{
-                if (day2Entry.text==""){
-                    messageLabel.visible=true
-                    messageLabel.text=i18nd("holiday-manager","You must indicate the two dates of range")
-                    return false
-                }else{
-                    if (Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")>=Date.fromLocaleString(Qt.locale(),day2Entry.text,"dd/MM/yyyy")){
-                        messageLabel.visible=true
-                        messageLabel.text=i18nd("holiday-manager","Last date in range must be major than init date")
-                        return false
-                    }else{
-                        messageLabel.visible=false
-                        messageLabel.text=""
-                        return true
-                    }
-                }
-            }
-        }else{
-            if (dayEntry.text==""){
-                messageLabel.visible=true
-                messageLabel.text=i18nd("holiday-manager","You must indicate the date")
                 return false
-            }else{
-                messageLabel.visible=false
-                messageLabel.text=""
-                return true
             }
+            var date1=Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")
+            var date2=Date.fromLocaleString(Qt.locale(),day2Entry.text,"dd/MM/yyyy")
+
+            if (date1>=date2){
+                messageLabel.visible=true
+                messageLabel.text=i18nd("holiday-manager","Last date in range must be major than init date")
+                return false
+            }
+        }else if (dayEntry.text===""){
+            messageLabel.visible=true
+            messageLabel.text=i18nd("holiday-manager","You must indicate a date")
+            return false
         }
+        
+        messageLabel.visible=false;
+        messageLabel.text="";
+        return true;
     }
 
     function loadInitValues(){
 
-        messageLabel.visible=false
         calendar.startDate=undefined
         calendar.stopDate=undefined
-        calendar.daysInRange=holidayStackBridge.daysInRange
-        rangeDate.checked=holidayStackBridge.dateRangeOption
-        
-        if (holidayStackBridge.dateRangeOption){
+        calendar.daysInRange=holidayStackBridge.dateToLoad.daysInRange
+        rangeDate.checked=holidayStackBridge.dateToLoad.rangeOption
+        messageLabel.visible=false
+        messageLabel.text=""
+
+        var newDate=new Date()
+        var days=holidayStackBridge.dateToLoad.daysInRange
+
+        if (holidayStackBridge.dateToLoad.rangeOption){
             dayEntry.text=""
-            if (holidayStackBridge.daysInRange.length>0){
-                day1Entry.text=holidayStackBridge.daysInRange[0]
-                day2Entry.text=holidayStackBridge.daysInRange[ holidayStackBridge.daysInRange.length-1]
-                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")
+            
+            if (days.length>0){
+                day1Entry.text=days[0]
+                day2Entry.text=days[days.length-1]
+                newDate=Date.fromLocaleString(Qt.locale(),day1Entry.text,"dd/MM/yyyy")
+
             }else{
                 day1Entry.text=""
                 day2Entry.text=""
-                calendar.selectedDate=new Date()
+
             }
-            calendar.initDate=day1Entry.text
-            calendar.endDate=day2Entry.text
         }else{
             day1Entry.text=""
             day2Entry.text=""
-            dayEntry.text=holidayStackBridge.daysInRange[0]
-            calendar.initDate=dayEntry.text
-            calendar.endDate=""
-            if (dayEntry!=""){
-                calendar.selectedDate=Date.fromLocaleString(Qt.locale(),dayEntry.text,"dd/MM/yyyy")
-            }else{
-                calendar.selectedDate=new Date()
+            dayEntry.text=days[0] || ""
+
+            if (dayEntry.text !==""){
+               newDate=Date.fromLocaleString(Qt.locale(),dayEntry.text,"dd/MM/yyyy")
             }
-
         }
-        descriptionEntry.text=holidayStackBridge.dateDescription
- 
-    }
 
+        descriptionEntry.text=holidayStackBridge.dateToLoad.description
+        calendar.initDate=rangeDate.checked?day1Entry.text:dayEntry.text
+        calendar.endDate=rangeDate.checked?day2Entry.text:"";
+        calendar.selectedDate=newDate
+    }
 }

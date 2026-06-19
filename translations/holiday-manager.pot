@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-29 10:05+0200\n"
+"POT-Creation-Date: 2026-06-17 12:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:53
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:63
 msgid "Loading. Wait a moment..."
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:56
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:65
 msgid "Applying changes. Wait a moment..."
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:59
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:67
 msgid "Exporting holidays configuration. Wait a moment..."
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:62
+#: holiday-manager/python3-holidaymanager/rsrc/CustomPopUp.qml:69
 msgid "Loading holidays configuration. Wait a moment..."
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:29
-#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:101
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:36
+#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:118
 msgid "Edit holiday"
 msgstr ""
 
@@ -42,169 +42,168 @@ msgstr ""
 msgid "Day:"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:138
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:140
 msgid "From:"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:153
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:157
 msgid "to:"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:174
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:178
 msgid "Description:"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:201
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:205
 msgid "Apply"
 msgstr ""
 
 #: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:225
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:157
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:182
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:146
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:171
 msgid "Cancel"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:244
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:249
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:242
 msgid "You must indicate the two dates of range"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:254
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:250
 msgid "Last date in range must be major than init date"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:266
-msgid "You must indicate the date"
+#: holiday-manager/python3-holidaymanager/rsrc/DateSelector.qml:255
+msgid "You must indicate a date"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:12
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:26
 msgid "Configured holiday"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:66
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:62
 msgid "Backup"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:77
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:72
 msgid "Generate backup"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:81
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:76
 msgid "Please choose a file to save holidays list"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:89
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:84
 msgid "Import backup"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:92
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:87
 msgid "Please choose a file to load holidays list"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:109
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:103
 msgid "Delete holidays list"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:121
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:118
 msgid "New holiday"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:142
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:174
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:134
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:163
 msgid "Holiday List"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:145
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:136
 msgid ""
 "The list of holidays will be deleted.\n"
 "Do yo want to continue?"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:147
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:137
 msgid ""
 "The holiday will be deleted.\n"
 "Do yo want to continue?"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:154
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:180
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:143
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:169
 msgid "Accept"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:175
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:164
 msgid ""
 "New holidays list will be loaded and replace the existing configutation.\n"
 "Do you want to continue?"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:221
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:210
 msgid "Unabled to apply changes. List blocked for other user"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:224
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:212
 msgid "Error saving changes"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:227
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:214
 msgid "Unabled to load holidays list"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:230
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:216
 msgid "Unabled to import list. List blocked for other user"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:233
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:218
 msgid "Error importing the list of holidays"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:236
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:220
 msgid "The list of holidays to be imported does not exist"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:239
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:222
 msgid "Error exporting the list of holidays"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:242
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:224
 msgid "Changes apply succesfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:245
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:226
 msgid "The list of holidays alreday removed. Nothing to do"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:248
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:228
 msgid "Holiday added successfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:251
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:230
 msgid "List of holidays imported successfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:254
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:232
 msgid "Holiday edited successfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:257
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:234
 msgid "List of holidays exported successfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:260
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:236
 msgid "Holiday deleted successfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:263
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayInfo.qml:238
 msgid "The list of holidays deleted successfully"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/HolidayList.qml:49
+#: holiday-manager/python3-holidaymanager/rsrc/HolidayList.qml:46
 msgid "No holiday is configured"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:88
+#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:99
 msgid "Click to manage the holiday"
 msgstr ""
 
-#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:108
+#: holiday-manager/python3-holidaymanager/rsrc/ListDelegateDateItem.qml:125
 msgid "Delete the holiday"
 msgstr ""

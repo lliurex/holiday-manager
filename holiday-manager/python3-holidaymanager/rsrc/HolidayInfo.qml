@@ -1,81 +1,78 @@
-import org.kde.kirigami 2.16 as Kirigami
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
+import org.kde.kirigami 2.16 as Kirigami
 
 Rectangle{
     id:rectLayout
     color:"transparent"
-    Text{ 
-        text:i18nd("holiday-manager","Configured holiday")
-        font.pointSize: 16
-    }
 
-    property var backupAction:undefined
-
-    GridLayout{
+    ColumnLayout{
         id:generalHolidaysLayout
-        rows:2
-        flow: GridLayout.TopToBottom
-        rowSpacing:10
+        anchors.top:parent.top
         anchors.left:parent.left
-        width:parent.width-10
-        height:parent.height-90
-        enabled:true
+        anchors.right:parent.right
+        anchors.bottom:btnBox.top
+
+        anchors.leftMargin:5
+        anchors.rightMargin:15
+        anchors.bottomMargin:25
+        spacing: 10
+
+        property var backupAction:undefined
+
+        Text{ 
+            text:i18nd("holiday-manager","Configured holiday")
+            font.pointSize: 16
+        }
+
         Kirigami.InlineMessage {
             id: messageLabel
-            visible:holidayStackBridge.showMainMessage[0]
-            text:getTextMessage(holidayStackBridge.showMainMessage[1])
+            visible:holidayStackBridge.showMainMessage.show
+            text:getTextMessage(holidayStackBridge.showMainMessage.msgCode)
             type:getTypeMessage(
-            holidayStackBridge.showMainMessage[2])
-            Layout.minimumWidth:650
+            holidayStackBridge.showMainMessage.type)
             Layout.fillWidth:true
-            Layout.topMargin: 40
         }
 
-        GridLayout{
-            id: optionsGrid
-            rows: 1
-            flow: GridLayout.TopToBottom
-            rowSpacing:10
-            Layout.topMargin: messageLabel.visible?0:80
-            
-            HolidayList{
-                id:holidayList
-                holidayModel:holidayStackBridge.holidayModel
-                Layout.fillHeight:true
-                Layout.fillWidth:true
-            }
+        HolidayList{
+            id:holidayList
+            holidayModel:holidayStackBridge.holidayModel
+            Layout.fillHeight:true
+            Layout.fillWidth:true
         }
     }
+
     RowLayout{
         id:btnBox
         anchors.bottom: parent.bottom
-        anchors.fill:parent.fill
-        anchors.bottomMargin:15
-        spacing:10
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin:5
+        anchors.topMargin:20
+        anchors.margins:15
+        spacing: 30
 
         Button {
             id:backupBtn
             visible:true
             display:AbstractButton.TextBesideIcon
-            icon.name:"backup.svg"
+            icon.name:"backup"
             text:i18nd("holiday-manager","Backup")
-            Layout.preferredHeight:40
             onClicked:backupMenu.open()
             
             Menu{
                 id:backupMenu
-                y: -backupBtn.height*1.7
+                y: -height - 5
                 x: backupBtn.width/2
 
                 MenuItem{
-                    icon.name:"document-export.svg"
+                    icon.name:"document-export"
                     text:i18nd("holiday-manager","Generate backup")
                     enabled:holidayStackBridge.enableGlobalOptions
                     onClicked:{
-                        backupAction="export"
+                        generalHolidaysLayout.backupAction="export"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to save holidays list")
                         backupFileDialog.selectExisting=false
                         backupFileDialog.open()
@@ -83,10 +80,10 @@ Rectangle{
                 }
 
                 MenuItem{
-                    icon.name:"document-import.svg"
+                    icon.name:"document-import"
                     text:i18nd("holiday-manager","Import backup")
                     onClicked:{
-                        backupAction="import"
+                        generalHolidaysLayout.backupAction="import"
                         backupFileDialog.title=i18nd("holiday-manager","Please choose a file to load holidays list")
                         backupFileDialog.selectExisting=true
                         importDatesDialog.open()
@@ -98,27 +95,28 @@ Rectangle{
            
         }
 
-       Button {
-            id:deleteBtn
-            visible:true
-            display:AbstractButton.TextBesideIcon
-            icon.name:"delete.svg"
-            text:i18nd("holiday-manager","Delete holidays list")
-            Layout.preferredHeight:40
-            enabled:holidayStackBridge.enableGlobalOptions
-            Layout.rightMargin:rectLayout.width-(backupBtn.width+deleteBtn.width+newBtn.width+30)
-            onClicked:holidayStackBridge.removeDate([true])
-        }            
+        Button {
+             id:deleteBtn
+             visible:true
+             display:AbstractButton.TextBesideIcon
+             icon.name:"delete"
+             text:i18nd("holiday-manager","Delete holidays list")
+             enabled:holidayStackBridge.enableGlobalOptions
+             onClicked:holidayStackBridge.removeDate({"removeAll":true,"dateToRemove":""})
+        } 
+
+        Item{
+            Layout.fillWidth:true
+        }
+           
+        
         Button {
             id:newBtn
             visible:true
             display:AbstractButton.TextBesideIcon
-            icon.name:"list-add.svg"
+            icon.name:"list-add"
             text:i18nd("holiday-manager","New holiday")
-            Layout.preferredHeight:40
-            onClicked:{
-                holidayStackBridge.addNewDate()
-            }
+            onClicked:holidayStackBridge.addNewDate()
         }
     }
     
@@ -132,24 +130,21 @@ Rectangle{
 
     ChangesDialog{
         id:removeDateDialog
-        dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
+        dialogIcon:"dialog-warning"
         dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
-        dialogMsg:{
-            if (holidayStackBridge.showRemoveDateDialog[1]){
-                i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
-            }else{
-                i18nd("holiday-manager","The holiday will be deleted.\nDo yo want to continue?")
-            }
-        }
-        dialogVisible:holidayStackBridge.showRemoveDateDialog[0]
-        dialogWidth:300
+        dialogMsg:holidayStackBridge.showRemoveDateDialog.removeAll
+                ?i18nd("holiday-manager","The list of holidays will be deleted.\nDo yo want to continue?")
+                :i18nd("holiday-manager","The holiday will be deleted.\nDo yo want to continue?")
+        
+        dialogVisible:holidayStackBridge.showRemoveDateDialog.show
+        dialogWidth:320
         btnAcceptVisible:false
         btnAcceptText:""
         btnDiscardText:i18nd("holiday-manager","Accept")
-        btnDiscardIcon:"dialog-ok.svg"
+        btnDiscardIcon:"dialog-ok"
         btnDiscardVisible:true
         btnCancelText:i18nd("holiday-manager","Cancel")
-        btnCancelIcon:"dialog-cancel.svg"
+        btnCancelIcon:"dialog-cancel"
         Connections{
            target:removeDateDialog
            function onDiscardDialogClicked(){
@@ -164,7 +159,7 @@ Rectangle{
 
     ChangesDialog{
         id:importDatesDialog
-        dialogIcon:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
+        dialogIcon:"dialog-warning"
         dialogTitle: holidayStackBridge.appName+" - "+i18nd("holiday-manager","Holiday List")
         dialogMsg:i18nd("holiday-manager","New holidays list will be loaded and replace the existing configutation.\nDo you want to continue?")
         dialogWidth:600
@@ -172,9 +167,9 @@ Rectangle{
         btnAcceptText:""
         btnDiscardVisible:true
         btnDiscardText:i18nd("holiday-manager","Accept")
-        btnDiscardIcon:"dialog-ok.svg"
+        btnDiscardIcon:"dialog-ok"
         btnCancelText:i18nd("holiday-manager","Cancel")
-        btnCancelIcon:"dialog-cancel.svg"
+        btnCancelIcon:"dialog-cancel"
         Connections{
            target:importDatesDialog
            function onDiscardDialogClicked(){
@@ -196,7 +191,7 @@ Rectangle{
             var selectedPath=""
             selectedPath=backupFileDialog.fileUrl.toString()
             selectedPath=selectedPath.replace(/^(file:\/{2})/,"")
-            switch(backupAction){
+            switch(generalHolidaysLayout.backupAction){
                 case "export":
                     holidayStackBridge.exportDatesConfig(selectedPath)
                     break;
@@ -212,69 +207,52 @@ Rectangle{
     function getTextMessage(msgCode){
         switch (msgCode){
             case -1:
-                var msg=i18nd("holiday-manager","Unabled to apply changes. List blocked for other user")
-                break;
+                return i18nd("holiday-manager","Unabled to apply changes. List blocked for other user")
             case -3:
-                var msg=i18nd("holiday-manager","Error saving changes")
-                break;
+                return i18nd("holiday-manager","Error saving changes")
             case -5:
-                var msg=i18nd("holiday-manager","Unabled to load holidays list")
-                break;
+                return i18nd("holiday-manager","Unabled to load holidays list")
             case -7:
-                var msg=i18nd("holiday-manager","Unabled to import list. List blocked for other user")
-                break;
+                return i18nd("holiday-manager","Unabled to import list. List blocked for other user")
             case -8:
-                var msg=i18nd("holiday-manager","Error importing the list of holidays")
-                break;
+                return i18nd("holiday-manager","Error importing the list of holidays")
             case -9:
-                var msg=i18nd("holiday-manager","The list of holidays to be imported does not exist")
-                break;
+                return i18nd("holiday-manager","The list of holidays to be imported does not exist")
             case -11:
-                var msg=i18nd("holiday-manager","Error exporting the list of holidays")
-                break;
+                return i18nd("holiday-manager","Error exporting the list of holidays")
             case 2:
-                var msg=i18nd("holiday-manager","Changes apply succesfully")
-                break;
+                return i18nd("holiday-manager","Changes apply succesfully")
             case 3:
-                var msg=i18nd("holiday-manager","The list of holidays alreday removed. Nothing to do")
-                break;
+                return i18nd("holiday-manager","The list of holidays alreday removed. Nothing to do")
             case 5:
-                var msg=i18nd("holiday-manager","Holiday added successfully")
-                break;
+                return i18nd("holiday-manager","Holiday added successfully")
             case 6:
-                var msg=i18nd("holiday-manager","List of holidays imported successfully")
-                break;
+                return i18nd("holiday-manager","List of holidays imported successfully")
             case 7:
-                var msg=i18nd("holiday-manager","Holiday edited successfully")
-                break;
+                return i18nd("holiday-manager","Holiday edited successfully")
             case 10:
-                var msg=i18nd("holiday-manager","List of holidays exported successfully")
-                break;
+                return i18nd("holiday-manager","List of holidays exported successfully")
             case 11:
-                var msg=i18nd("holiday-manager","Holiday deleted successfully")
-                break;
+                return i18nd("holiday-manager","Holiday deleted successfully")
             case 12:
-                var msg=i18nd("holiday-manager","The list of holidays deleted successfully")
-                break;
+                return i18nd("holiday-manager","The list of holidays deleted successfully")
             default:
-                var msg=""
-                break;
+                return ""
         }
-        return msg
     } 
 
     function getTypeMessage(msgType){
 
-        switch (msgType){
-            case "Information":
-                return Kirigami.MessageType.Information
-            case "Ok":
+        switch(msgType){
+            case 0:
                 return Kirigami.MessageType.Positive
-            case "Error":
+            case 1:
                 return Kirigami.MessageType.Error
-            case "Warning":
+            case 2:
                 return Kirigami.MessageType.Warning
+            case 3:
+            default:
+                return Kirigami.MessageType.Information
         }
     }
-
 } 

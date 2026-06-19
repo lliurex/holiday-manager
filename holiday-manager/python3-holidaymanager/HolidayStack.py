@@ -18,70 +18,84 @@ IMPORT_DATES_CONFIG=4
 
 class LoadDate(QThread):
 
-	def __init__(self,*args):
+	dateLoaded=Signal()
 
-		QThread.__init__(self)
-		self.newDate=args[0]
-		self.dateInfo=args[1]
+	def __init__(self,manager,newDate,dateToLoad):
+
+		super().__init__()
+		self.manager=manager
+		self.newDate=newDate
+		self.dateToLoad=dateToLoad
 
 	#def __init__
 
 	def run(self,*args):
 
 		time.sleep(0.5)
-		Bridge.holidayManager.initValues()
+		self.manager.initValues()
 		if not self.newDate:
-			Bridge.holidayManager.loadDateConfig(self.dateInfo)
+			self.manager.loadDateConfig(self.dateToLoad)
+
+		self.dateLoaded.emit()
 
 	#def run
 
 #class LoadDate
 
-class AddDate(QThread):
+class SaveDate(QThread):
 
-	def __init__(self,*args):
+	dateSaved=Signal(dict)
 
-		QThread.__init__(self)
-		self.newDate=args[0]
-		self.ret=[]
+	def __init__(self,manager,infoToSave):
+
+		super().__init__()
+		self.manager=manager
+		self.infoToSave=infoToSave
 
 	#def __init__
 
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.holidayManager.addDate(self.newDate)
+		ret=self.manager.addDate(self.infoToSave)
+		self.dateSaved.emit(ret)
 
 	#def run
 
-#class AddDate
+#class SaveDate
 
 class RemoveDate(QThread):
 
-	def __init__(self,*args):
+	dateRemoved=Signal(dict)
 
-		QThread.__init__(self)
-		self.allDates=args[0]
-		self.dateToRemove=args[1]
-		self.ret=[]
+	def __init__(self,manager,removeAll,dateToRemove):
+
+		super().__init__()
+		self.manager=manager
+		self.allDates=removeAll
+		self.dateToRemove=dateToRemove
 
 	#def __init__
 
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.holidayManager.removeDate(self.allDates,self.dateToRemove)
-
+		ret=self.manager.removeDate(self.allDates,self.dateToRemove)
+		self.dateRemoved.emit(ret)
+	
 	#def run
 
 #class RemoveDate
 
 class GenerateBackup(QThread):
 
-	def __init__(self,*args):
+	backupGenerated=Signal(dict)
 
-		QThread.__init__(self)
-		self.exportPath=args[0]
+	def __init__(self,manager,exportPath):
+
+		super().__init__()
+		self.manager=manager
+		self.exportPath=exportPath
 		self.ret=[]
 
 	#def __init__
@@ -89,7 +103,8 @@ class GenerateBackup(QThread):
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.holidayManager.exportDatesConfig(self.exportPath)
+		ret=self.manager.exportDatesConfig(self.exportPath)
+		self.backupGenerated.emit(ret)
 
 	#def run
 
@@ -97,60 +112,151 @@ class GenerateBackup(QThread):
 
 class ImportBackup(QThread):
 
-	def __init__(self,*args):
+	backupImported=Signal(dict)
 
-		QThread.__init__(self)
-		self.importPath=args[0]
-		self.ret=[]
+	def __init__(self,manager,importPath):
+
+		super().__init__()
+		self.manager=manager
+		self.importPath=importPath
 
 	#def __init__
 
 	def run(self,*args):
 
 		time.sleep(0.5)
-		self.ret=Bridge.holidayManager.importDatesConfig(self.importPath)
+		ret=self.manager.importDatesConfig(self.importPath)
+		self.backupImported.emit(ret)
 
 	#def run
 
 #class ImportBackup
 
-
 class Bridge(QObject):
+
+	showMainMessageChanged=Signal()
+	showDateFormChanged=Signal()
+	showPopUpChanged=Signal()
+	dateToLoadChanged=Signal()
+	enableGlobalOptionsChanged=Signal()
+	showRemoveDateDialogChanged=Signal()
 
 	def __init__(self,appName=None,ticket=None,):
 
 		QObject.__init__(self)
-		Bridge.holidayManager=HolidayManager.HolidayManager()
+		self.holidayManager=HolidayManager.HolidayManager()
 		self._holidayModel=HolidayModel.HolidayModel()
-		self._showMainMessage=[False,"","Ok"]
+		self._showMainMessage={"show":False,"msgCode":"","type":""}
 		self._showDateForm=False
-		self._closePopUp=[True,""]
-		self._dateRangeOption=Bridge.holidayManager.dateRangeOption
-		self._daysInRange=Bridge.holidayManager.daysInRange
-		self._dateDescription=Bridge.holidayManager.dateDescription
+		self._showPopUp={"show":False,"msgCode":""}
+		self._dateToLoad=self.holidayManager.dateToLoad
 		self._enableGlobalOptions=False
-		self._showRemoveDateDialog=[False,False]
+		self._showRemoveDateDialog={"show":False,"removeAll":False}
+		
 		if appName!=None:
 			self._appName=appName
 		else:
 			self._appName="Holiday-Manager"
 						
-		Bridge.holidayManager.createN4dClient(sys.argv[1])
+		self.holidayManager.createN4dClient(sys.argv[1])
 
 	#def _init__
 
-	def initBridge(self):
+	@Property('QVariant',notify=showMainMessageChanged)
+	def showMainMessage(self):
 
-		ret=Bridge.holidayManager.readConf()
-		if ret["status"]:
-			self._systemLocale=Bridge.holidayManager.systemLocale
-			self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()			
-			self._updateHolidayModel()
-			
-		else:
-			self.showMainMessage=[True,ret["code"],"Error"]
+		return self._showMainMessage
 
-	#def initBridge
+	#def showMainMessage
+
+	@showMainMessage.setter
+	def showMainMessage(self,showMainMessage):
+
+		if self._showMainMessage!=showMainMessage:
+			self._showMainMessage=showMainMessage
+			self.showMainMessageChanged.emit()
+
+	#def showMainMessage
+
+	@Property(bool,notify=showDateFormChanged)
+	def showDateForm(self):
+
+		return self._showDateForm
+
+	#def showDateForm
+
+	@showDateForm.setter
+	def showDateForm(self,showDateForm):
+
+		if self._showDateForm!=showDateForm:
+			self._showDateForm=showDateForm
+			self.showDateFormChanged.emit()
+
+	#def showDateForm
+
+	@Property('QVariant',notify=showPopUpChanged)
+	def showPopUp(self):
+
+		return self._showPopUp
+
+	#def _showPopUp
+
+	@showPopUp.setter
+	def showPopUp(self,showPopUp):
+
+		if self._showPopUp!=showPopUp:
+			self._showPopUp=showPopUp
+			self.showPopUpChanged.emit()
+
+	#def _showPopUp
+
+	@Property('QVariant',notify=dateToLoadChanged)
+	def dateToLoad(self):
+
+		return self._dateToLoad
+
+	#def dateToLoad
+
+	@dateToLoad.setter
+	def dateToLoad(self,dateToLoad):
+
+		if self._dateToLoad!=dateToLoad:
+			self._dateToLoad=dateToLoad
+			self.dateToLoadChanged.emit()
+
+	#def dateToLoad
+	
+	@Property(bool,notify=enableGlobalOptionsChanged)
+	def enableGlobalOptions(self):
+
+		return self._enableGlobalOptions
+
+	#def enableGlobalOptions
+
+	@enableGlobalOptions.setter
+	def enableGlobalOptions(self,enableGlobalOptions):
+
+		if self._enableGlobalOptions!=enableGlobalOptions:
+			self._enableGlobalOptions=enableGlobalOptions
+			self.enableGlobalOptionsChanged.emit()
+
+	#def enableGlobalOptions
+
+	@Property('QVariant',notify=showRemoveDateDialogChanged)
+	def showRemoveDateDialog(self):
+
+		return self._showRemoveDateDialog
+
+	#def showRemoveDateDialog
+
+	@showRemoveDateDialog.setter
+	def showRemoveDateDialog(self,showRemoveDateDialog):
+
+		if self._showRemoveDateDialog!=showRemoveDateDialog:
+			self._showRemoveDateDialog=showRemoveDateDialog
+			self.showRemoveDateDialogChanged.emit()
+
+	#def showRemoveDateDialog
 
 	def _getAppName(self):
 
@@ -158,230 +264,128 @@ class Bridge(QObject):
 
 	#def _getAppName
 
-	def _getHolidayModel(self):
-
-		return self._holidayModel
-
-	#def _getHolidayModel
-
 	def _getSystemLocale(self):
 
 		return self._systemLocale
 
 	#def _getSystemLocale
 
+	def _getHolidayModel(self):
+
+		return self._holidayModel
+
+	#def _getHolidayModel	
+
+	def initBridge(self):
+
+		ret=self.holidayManager.readConf()
+		if not ret.get("status"):
+			self.showMainMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+		else:
+			self._systemLocale=self.holidayManager.systemLocale
+			self.enableGlobalOptions=self.holidayManager.checkGlobalOptionsStatus()			
+			self._updateHolidayModel()
+			
+	#def initBridge
+	
 	def _updateHolidayModel(self):
 
 		ret=self._holidayModel.clear()
-		datesEntries=Bridge.holidayManager.datesConfigData
+		datesEntries=self.holidayManager.datesConfigData
+
 		for item in datesEntries:
 			if item["id"]!="":
 				self._holidayModel.appendRow(item["id"],item["type"],item["description"])
 	
 	#def _updateHolidayModel
 
-	def _getShowMainMessage(self):
-
-		return self._showMainMessage
-
-	#def _getShowMainMessage
-
-	def _setShowMainMessage(self,showMainMessage):
-
-		if self._showMainMessage!=showMainMessage:
-			self._showMainMessage=showMainMessage
-			self.on_showMainMessage.emit()
-
-	#def _setShowMainMessage
-
-	def _getShowDateForm(self):
-
-		return self._showDateForm
-
-	#def _getShowDateForm
-
-	def _setShowDateForm(self,showDateForm):
-
-		if self._showDateForm!=showDateForm:
-			self._showDateForm=showDateForm
-			self.on_showDateForm.emit()
-
-	#def _setShowDateForm
-
-	def _getClosePopUp(self):
-
-		return self._closePopUp
-
-	#def _getClosePopUp
-
-	def _setClosePopUp(self,closePopUp):
-
-		if self._closePopUp!=closePopUp:
-			self._closePopUp=closePopUp
-			self.on_closePopUp.emit()
-
-	#def _setClosePopUp
-
-	def _getDateDescription(self):
-
-		return self._dateDescription
-
-	#def _getDateDescription
-
-	def _setDateDescription(self,dateDescription):
-
-		if self._dateDescription!=dateDescription:
-			self._dateDescription=dateDescription
-			self.on_dateDescription.emit()
-
-	#def _setDateDescription
-
-	def _getDateRangeOption(self):
-
-		return self._dateRangeOption
-
-	#def _getDateRangeOption
-
-	def _setDateRangeOption(self,dateRangeOption):
-
-		if self._dateRangeOption!=dateRangeOption:
-			self._dateRangeOption=dateRangeOption
-			self.on_dateRangeOption.emit()
-
-	#def _setDateRangeOption
-
-	def _getDaysInRange(self):
-
-		return self._daysInRange
-
-	#def _getDaysInRange
-
-	def _setDaysInRange(self,daysInRange):
-
-		if self._daysInRange!=daysInRange:
-			self._daysInRange=daysInRange
-			self.on_daysInRange.emit()
-
-	#def _setDaysInRange
-
-	def _getEnableGlobalOptions(self):
-
-		return self._enableGlobalOptions
-
-	#def _getEnableGlobalOptions
-
-	def _setEnableGlobalOptions(self,enableGlobalOptions):
-
-		if self._enableGlobalOptions!=enableGlobalOptions:
-			self._enableGlobalOptions=enableGlobalOptions
-			self.on_enableGlobalOptions.emit()
-
-	#def _setEnableGlobalOptions
-
-	def _getShowRemoveDateDialog(self):
-
-		return self._showRemoveDateDialog
-
-	#def _getShowRemoveDateDialog
-
-	def _setShowRemoveDateDialog(self,showRemoveDateDialog):
-
-		if self._showRemoveDateDialog!=showRemoveDateDialog:
-			self._showRemoveDateDialog=showRemoveDateDialog
-			self.on_showRemoveDateDialog.emit()
-
-	#def _setShowRemoveDateDialog	
-
 	@Slot()
 	def addNewDate(self):
 
-		self.closePopUp=[False,LOAD_MSG]
-		self.newDate=LoadDate(True,"")
-		self.newDate.start()
-		self.newDate.finished.connect(self._newDateRet)
+		self.showPopUp={"show":True,"msgCode":LOAD_MSG}
+		self.newDateT=LoadDate(self.holidayManager,True,"")
+		self.newDateT.start()
+		self.newDateT.dateLoaded.connect(self._loadDateRet)
+		self.newDateT.finished.connect(self.newDateT.deleteLater)
 
 	#def addNewDate
-
-	def _newDateRet(self):
-
-		self._initializeVars()
-		self.closePopUp=[True,""]
-
-	#def _newDateRet
-
-	def _initializeVars(self):
-
-		self.dateRangeOption=Bridge.holidayManager.dateRangeOption
-		self.daysInRange=Bridge.holidayManager.daysInRange
-		self.dateDescription=Bridge.holidayManager.dateDescription
-		self.currentDateConfig=copy.deepcopy(Bridge.holidayManager.currentDateConfig)
-		self.showDateForm=True
-
-	#def _initializeVars
 
 	@Slot(str)
 	def loadDate(self,dateToLoad):
 
-		self.closePopUp=[False,LOAD_MSG]
-		self.editDate=LoadDate(False,dateToLoad)
-		self.editDate.start()
-		self.editDate.finished.connect(self._editDateRet)
+		self.showPopUp={"show":True,"msgCode":LOAD_MSG}
+		self.editDateT=LoadDate(self.holidayManager,False,dateToLoad)
+		self.editDateT.start()
+		self.editDateT.dateLoaded.connect(self._loadDateRet)
+		self.editDateT.finished.connect(self.editDateT.deleteLater)
 
 	#def loadDate
 
-	def _editDateRet(self):
+	def _loadDateRet(self):
 
 		self._initializeVars()
-		self.closePopUp=[True,""]
+		self.showPopUp={"show":False,"msgCode":""}
+
+	#def _loadDateRet
+
+	def _initializeVars(self):
+
+		self.dateToLoad=self.holidayManager.dateToLoad
+		self.currentDateConfig=copy.deepcopy(self.holidayManager.currentDateConfig)
 		self.showDateForm=True
 
-	#def _editDateRet
+	#def _initializeVars
 
-	@Slot('QVariantList')
+	@Slot('QJSValue')
 	def applyDateChanges(self,data):
 
+		data=data.toVariant()
+				
 		self.showDateForm=False
 
 		if data!=self.currentDateConfig:
 			self.currentDateConfig=data
-			self.closePopUp=[False,APPLY_CHANGES_MSG]
-			self.saveDate=AddDate(self.currentDateConfig)
-			self.saveDate.start()
-			self.saveDate.finished.connect(self._saveDateRet)
+			self.showPopUp={"show":True,"msgCode":APPLY_CHANGES_MSG}
+			self.saveDateT=SaveDate(self.holidayManager,self.currentDateConfig)
+			self.saveDateT.start()
+			self.saveDateT.dateSaved.connect(self._saveDateRet)
+			self.saveDateT.finished.connect(self.saveDateT.deleteLater)
 
 	#def applyDateChanges
 
-	def _saveDateRet(self):
+	@Slot(dict)
+	def _saveDateRet(self,ret):
 
-		if self.saveDate.ret[0]:
+		if ret.get("status"):
 			self._updateHolidayModel()
-			self.showMainMessage=[True,self.saveDate.ret[1],"Ok"]
-		else:
-			self.showMainMessage=[True,self.saveDate.ret[1],"Error"]
-
-		self.closePopUp=[True,""]
-		self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()			
+		
+		self.showMainMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+		self.showPopUp={"show":False,"msgCode":""}
+		self.enableGlobalOptions=self.holidayManager.checkGlobalOptionsStatus()			
 
 	#def _saveDataRet
 
-	@Slot('QVariantList')
+	@Slot('QJSValue')
 	def removeDate(self,data):
 
-		self.showMainMessage=[False,"","Ok"]
-		self.removeAllDates=data[0]
+		data=data.toVariant()
+
+		self.showMainMessage={"show":False,"msgCode":"","type":""}
+		self.removeAllDates=data.get("removeAll")
+
 		if self.removeAllDates:
 			self.dateToRemove=None
 		else:
-			self.dateToRemove=data[1]
+			self.dateToRemove=data.get("dateToRemove")
 
-		self.showRemoveDateDialog=[True,self.removeAllDates]
+		self.showRemoveDateDialog={"show":True,"removeAll":self.removeAllDates}
 
 	#def removeDate
 
 	@Slot(str)
 	def manageRemoveDateDialog(self,response):
 
-		self.showRemoveDateDialog=[False,False]
+		self.showRemoveDateDialog={"show":False,"removeAll":False}
 		if response=="Accept":
 			self._launchRemoveDateProcess()
 
@@ -389,70 +393,68 @@ class Bridge(QObject):
 
 	def _launchRemoveDateProcess(self):
 
-		self.closePopUp=[False,APPLY_CHANGES_MSG]
+		self.showPopUp={"show":True,"msgCode":APPLY_CHANGES_MSG}
 
-		self.removeDateProcess=RemoveDate(self.removeAllDates,self.dateToRemove)
-		self.removeDateProcess.start()
-		self.removeDateProcess.finished.connect(self._removeDateProcessRet)
+		self.removeDateProcessT=RemoveDate(self.holidayManager, self.removeAllDates,self.dateToRemove)
+		self.removeDateProcessT.start()
+		self.removeDateProcessT.dateRemoved.connect(self._removeDateProcessRet)
+		self.removeDateProcessT.finished.connect(self.removeDateProcessT.deleteLater)
 
 	#def _launchRemoveDateProcess
 
-	def _removeDateProcessRet(self):
+	@Slot(dict)
+	def _removeDateProcessRet(self,ret):
 
-		if self.removeDateProcess.ret[0]:
+		if ret.get("status"):
 			self._updateHolidayModel()
-			self.showMainMessage=[True,self.removeDateProcess.ret[1],"Ok"]
-		else:
-			self.showMainMessage=[False,self.removeDateProcess.ret[1],"Error"]
-
-		self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()
-		self.closePopUp=[True,""]
+		
+		self.showMainMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+		self.enableGlobalOptions=self.holidayManager.checkGlobalOptionsStatus()
+		self.showPopUp={"show":False,"msgCode":""}
 
 	#def _removeDateProcessRet	
 
 	@Slot(str)
 	def exportDatesConfig(self,exportPath):
 
-		self.showMainMessage=[False,"","Ok"]
-		self.closePopUp=[False,EXPORT_DATES_CONFIG]
-		self.generateBackup=GenerateBackup(exportPath)
-		self.generateBackup.start()
-		self.generateBackup.finished.connect(self._exportDatesConfigRet)
+		self.showMainMessage={"show":False,"msgCode":"","type":""}
+		self.showPopUp={"show":True,"msgCode":EXPORT_DATES_CONFIG}
+		self.generateBackupT=GenerateBackup(self.holidayManager,exportPath)
+		self.generateBackupT.start()
+		self.generateBackupT.backupGenerated.connect(self._generateBackupRet)
+		self.generateBackupT.finished.connect(self.generateBackupT.deleteLater)
 
 	#def exportDatesConfig
 
-	def _exportDatesConfigRet(self):
+	@Slot(dict)
+	def _generateBackupRet(self,ret):
 
-		if self.generateBackup.ret["status"]:
-			self.showMainMessage=[True,self.generateBackup.ret["code"],"Ok"]
-		else:
-			self.showMainMessage=[True,self.generateBackup.ret["code"],"Error"]
-		
-		self.closePopUp=[True,""]			
+		self.showMainMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+		self.showPopUp={"show":False,"msgCode":""}			
 
 	#def _exportDatesConfigRet
 
 	@Slot(str)
 	def importDatesConfig(self,importPath):
 
-		self.showMainMessage=[False,"","Ok"]
-		self.closePopUp=[False,IMPORT_DATES_CONFIG]
-		self.importBackup=ImportBackup(importPath)
-		self.importBackup.start()
-		self.importBackup.finished.connect(self._importBackupRet)
+		self.showMainMessage={"show":False,"msgCode":"","type":""}
+		self.showPopUp={"show":True,"msgCode":IMPORT_DATES_CONFIG}
+		self.importBackupT=ImportBackup(self.holidayManager,importPath)
+		self.importBackupT.start()
+		self.importBackupT.backupImported.connect(self._importBackupRet)
+		self.importBackupT.finished.connect(self.importBackupT.deleteLater)
 
 	#def importDatesConfig
 
-	def _importBackupRet(self):
+	@Slot(dict)
+	def _importBackupRet(self,ret):
 
-		if self.importBackup.ret[0]:
+		if ret.get("status"):
 			self._updateHolidayModel()
-			self.showMainMessage=[True,self.importBackup.ret[1],"Ok"]
-		else:
-			self.showMainMessage=[True,self.importBackup.ret[1],"Error"]
-
-		self.enableGlobalOptions=Bridge.holidayManager.checkGlobalOptionsStatus()			
-		self.closePopUp=[True,""]
+		
+		self.showMainMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+		self.enableGlobalOptions=self.holidayManager.checkGlobalOptionsStatus()			
+		self.showPopUp={"show":False,"msgCode":""}
 
 	#def _importBackupRet
 
@@ -463,34 +465,9 @@ class Bridge(QObject):
 
 	#def closeDateForm
 
-	on_showMainMessage=Signal()
-	showMainMessage=Property('QVariantList',_getShowMainMessage,_setShowMainMessage,notify=on_showMainMessage)
-
-	on_showDateForm=Signal()
-	showDateForm=Property(bool,_getShowDateForm,_setShowDateForm,notify=on_showDateForm)
-
-	on_closePopUp=Signal()
-	closePopUp=Property('QVariantList',_getClosePopUp,_setClosePopUp,notify=on_closePopUp)
-
-	on_dateDescription=Signal()
-	dateDescription=Property(str,_getDateDescription,_setDateDescription,notify=on_dateDescription)
-
-	on_dateRangeOption=Signal()
-	dateRangeOption=Property(bool,_getDateRangeOption,_setDateRangeOption,notify=on_dateRangeOption)
-
-	on_daysInRange=Signal()
-	daysInRange=Property('QVariantList',_getDaysInRange,_setDaysInRange,notify=on_daysInRange)
-
-	on_enableGlobalOptions=Signal()
-	enableGlobalOptions=Property(bool,_getEnableGlobalOptions,_setEnableGlobalOptions,notify=on_enableGlobalOptions)
-
-	on_showRemoveDateDialog=Signal()
-	showRemoveDateDialog=Property('QVariantList',_getShowRemoveDateDialog,_setShowRemoveDateDialog,notify=on_showRemoveDateDialog)
-
 	appName=Property(str,_getAppName,constant=True)
 	systemLocale=Property(str,_getSystemLocale,constant=True)
 	holidayModel=Property(QObject,_getHolidayModel,constant=True)
-
 
 #clas Bridge
 

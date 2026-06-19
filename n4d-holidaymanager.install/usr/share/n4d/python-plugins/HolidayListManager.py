@@ -67,8 +67,9 @@ class HolidayListManager:
 	def add_day(self,newDate):
 		
 		current_list=self.holiday_list.copy()
-		current_list[newDate[0]]={}
-		current_list[newDate[0]]["description"]=newDate[1]
+		tmpDate=newDate.get("value")
+		tmpDescription=newDate.get("description")
+		current_list[tmpDate]={"description":tmpDescription}
 
 		ret=self._write_conf(current_list)
 		
