@@ -17,6 +17,11 @@ class HolidayManager(object):
 	DATE_REMOVED_SUCCESSFULLY=11
 	DATES_REMOVED_SUCCESSFULLY=12
 
+	KIRIGAMI_MSG_OK=0
+	KIRIGAMI_MSG_ERROR=1
+	KIRIGAMI_MSG_WARNING=2
+	KIRIGAMI_MSG_INFO=3
+
 
 	def __init__(self):
 
@@ -43,7 +48,7 @@ class HolidayManager(object):
 	def _debug(self,function,msg):
 
 		if self.dbg==1:
-			print("[MANAGE HOLIDAYS]: "+ str(function) + str(msg))
+			print(f"[MANAGE HOLIDAYS]: {function} {msg}")
 
 	#def _debug
 
@@ -64,10 +69,15 @@ class HolidayManager(object):
 		self.loadError=False
 		result=self.client.HolidayListManager.read_conf()
 		self._debug("readConf: ",result)
-		self.datesConfig=result["info"]
+		self.datesConfig=result.get("info",{})
 		self.datesConfigData=[]
-		if result["status"]:
+		
+		if result.get("status"):
+			result["type"]=HolidayManager.KIRIGAMI_MSG_OK
 			self._getDatesConfig()
+		else:
+			result["type"]=HolidayManager.KIRIGAMI_MSG_ERROR
+
 		return result
 
 	#def readConf
@@ -77,164 +87,137 @@ class HolidayManager(object):
 		orderDate=self._getOrderDate()
 
 		for item in orderDate:
-			tmp={}
-			tmp["id"]=item
-			if "-" in item:
-				tmp["type"]="range"
-			else:
-				tmp["type"]="single"
-			tmp["description"]=self.datesConfig[item]["description"]
-	
+			tmp={
+				"id":item,
+				"type":"range" if "-" in item else "single",
+				"description":self.datesConfig.get(item).get("description")
+			}
+
 			self.datesConfigData.append(tmp)
 
 	#def _getDatesConfig		
 
 	def _getOrderDate(self):
 
-		tmp=[]
-		orderDate=[]
-
-		if len(self.datesConfig)>0:
-			for item in self.datesConfig:
-				if "-" in item:
-					date_toformat=item.split("-")[0]
-				else:
-					date_toformat=item
-
-				datef=datetime.strptime(date_toformat,"%d/%m/%Y")
-				x=()
-				x=item,datef
-				tmp.append(x)
-
-		tmp.sort(key=lambda date:date[1])
-		for item in tmp:
-			orderDate.append(item[0])
-
-		return orderDate
-
+		return sorted(
+			self.datesConfig.keys(),
+			key=lambda item:datetime.strptime(item.split("-")[0],"%d/%m/%Y")
+			)
+		
 	#def _getOrderDate
 
 	def loadDateConfig(self,date):
 
-		self.dateToLoad=date
-		self.dateRangeOption=self._checkRangeOption(self.dateToLoad)	
-		self.daysInRange=self.getDaysInRange(self.dateToLoad)
-		self.currentDateConfig=[self.dateToLoad,self.datesConfig[self.dateToLoad]["description"]]
-		self.dateDescription=self.currentDateConfig[1]
+		self.dateToLoad={
+			"id":date,
+			"rangeOption":self._checkRangeOption(date),
+			"daysInRange":self.getDaysInRange(date),
+			"description":self.datesConfig.get(date).get("description")
+		}
+
+		self.currentDateConfig={
+			"value":date,
+			"description":self.dateToLoad.get("description")
+		}
 
 	#def loadDateConfig
 
 	def initValues(self):
 
-		self.dateRangeOption=True
-		self.daysInRange=[]
-		self.currentDateConfig=[]
-		self.dateDescription=""
+		self.dateToLoad={
+			"id":"",
+			"rangeOption":True,
+			"daysInRange":[],
+			"description":""
+		}
+
+		self.currentDateConfig={
+			"value":self.dateToLoad.get("id"),
+			"description":self.dateToLoad.get("description")
+		}
 		
 	#def initValues
 
 	def getDaysInRange(self,day):	
 
-		listDays=[]
-		if day!="":
-			if "-" in day:
-				tmp=day.split("-")
-				date1=datetime.strptime(tmp[0],'%d/%m/%Y')
-				date2=datetime.strptime(tmp[1],'%d/%m/%Y')
-			else:
-				date1=datetime.strptime(day,'%d/%m/%Y')
-				date2=date1
-			delta=date2-date1
-			for i in range(delta.days + 1):
-				tmpDay=(date1 + timedelta(days=i)).strftime('%d/%m/%Y')
-				listDays.append(tmpDay)
+		if not day:
+			return []
 
-		return listDays	
+		tmpDay=day.split("-")
+		date1=datetime.strptime(tmpDay[0],'%d/%m/%Y')
+		date2=datetime.strptime(tmpDay[1],'%d/%m/%Y') if len(tmpDay)>1 else date1
 
-	#def getDaysInRange
+		delta=date2-date1
+
+		return [(date1 + timedelta(days=i)).strftime('%d/%m/%Y') for i in range(delta.days + 1)]
+	
+		#def getDaysInRange
 
 	def _checkRangeOption(self,date):
 
-		if date!="":
-			if "-" in date:
-				return True
-			else:
-				return False
-		return True
-
+		return not date or "-" in date
+		
 	#def _checkRangeOption
 
 	def checkGlobalOptionsStatus(self):
 
-		if len(self.datesConfig)>0:
-			return True
-		else:
-			return False
+		return bool(self.datesConfig)
 
 	#def checkGlobalOptionsStatus
 	
 	def addDate(self,newDate):
 
-		ret=True
 		action="add"
 	
-		if len(self.currentDateConfig)>0:
+		if len(self.currentDateConfig.get("value"))>0:
 			action="edit"
-			if newDate[0]!=self.currentDateConfig[0]:
-				retDelete=self.client.HolidayListManager.delete_day(self.currentDateConfig[0])
+			if newDate.get("value")!=self.currentDateConfig.get("value"):
+				retDelete=self.client.HolidayListManager.delete_day(self.currentDateConfig.get("value"))
 				self._debug("addDate-delete: ",retDelete)
-				if not retDelete['status']:
-					ret=False
-		if ret:
-			retSave=self.client.HolidayListManager.add_day(newDate)
-			self._debug("addDate-save: ",retSave)
+				if not retDelete.get("status"):
+					return {"status":False,"code":retDelete.get("code"),"type":HolidayManager.KIRIGAMI_MSG_ERROR}
+		
+		retSave=self.client.HolidayListManager.add_day(newDate)
+		self._debug("addDate-save: ",retSave)
 
-			if retSave["status"]:
-				retReadConfig=self.readConf()
-				if retReadConfig['status']:
-					if action=="edit":
-						return [True,HolidayManager.DATE_EDITED_SUCCESSFULLY]
-					else:
-						return [True,HolidayManager.DATE_ADDED_SUCCESSFULLY]
-				else:
-					return [False,retReadConfig["code"]]
-			else:
-				return [False,retSave["code"]]
+		if not retSave.get("status"):
+			return {"status":False,"code":retSave.get("code"),"type":HolidayManager.KIRIGAMI_MSG_ERROR}
+		
+		retReadConfig=self.readConf()
+
+		if not retReadConfig.get("status"):
+			return {"status":False,"code":retReadConfig["code"],"type":HolidayManager.KIRIGAMI_MSG_ERROR}
+
+		if action=="edit":
+			return {"status":True,"code":HolidayManager.DATE_EDITED_SUCCESSFULLY,"type":HolidayManager.KIRIGAMI_MSG_OK}
+		
+		return {"status":True,"code":HolidayManager.DATE_ADDED_SUCCESSFULLY,"type":HolidayManager.KIRIGAMI_MSG_OK}
 			
-		else:
-			return [False,retDelete["code"]]
-	
 	#def addDate
 
 	def removeDate(self,allDates,dateToRemove=None):
 
 		if allDates:
-			if len(self.datesConfig)>0:
-				retRemove=self.client.HolidayListManager.reset_holiday_list()
-				self._debug("removeDate-all: ",retRemove)
-				if retRemove['status']:
-					retReadConfig=self.readConf()
-					if retReadConfig["status"]:
-						return [True,HolidayManager.DATES_REMOVED_SUCCESSFULLY]
-					else:
-						return [False,retReadConfig["code"]]
-				else:
-					return [False, retRemove["code"]]
-			else:
-				return [True,HolidayManager.DATES_ALREADY_REMOVED]
+			if not self.datesConfig:
+				return {"status":True,"code":HolidayManager.DATES_ALREADY_REMOVED,"type":HolidayManager.KIRIGAMI_MSG_OK}
+
+			retRemove=self.client.HolidayListManager.reset_holiday_list()
+			self._debug("removeDate-all: ",retRemove)
+			msgOK=HolidayManager.DATES_REMOVED_SUCCESSFULLY
 		else:
-			ret=self.client.HolidayListManager.delete_day(dateToRemove)
-			self._debug("removeDate: ",ret)
+			retRemove=self.client.HolidayListManager.delete_day(dateToRemove)
+			self._debug("removeDate: ",retRemove)
+			msgOK=HolidayManager.DATE_REMOVED_SUCCESSFULLY
 
-			if ret["status"]:
-				retReadConfig=self.readConf()
-				if retReadConfig['status']:
-					return [True,HolidayManager.DATE_REMOVED_SUCCESSFULLY]
-				else:
-					return [False,retReadConfig["code"]]
-			else:
-				return [False,ret["code"]]
+		if not retRemove.get("status"):
+			return {"status":False,"code":retRemove.get("code"),"type":HolidayManager.KIRIGAMI_MSG_ERROR}
 
+		retReadConfig=self.readConf()
+		if not retReadConfig.get("status"):
+			return {"status":False,"code":retReadConfig.get("code"),"type":HolidayManager.KIRIGAMI_MSG_ERROR}
+
+		return {"status":True,"code":msgOK,"type":HolidayManager.KIRIGAMI_MSG_OK}
+	
 	#def removeBell
 
 	def exportDatesConfig(self,destFile):
@@ -243,6 +226,8 @@ class HolidayManager(object):
 		result=self.client.HolidayListManager.export_holiday_list(user,destFile)
 		self._debug("exportDatesConfig: ",result)
 
+		result["type"]=HolidayManager.KIRIGAMI_MSG_OK if result.get("status") else HolidayManager.KIRIGAMI_MSG_ERROR
+		
 		return result
 
 	#def exportDatesConfig
@@ -251,15 +236,16 @@ class HolidayManager(object):
 
 		resultImport=self.client.HolidayListManager.import_holiday_list(origFile)
 		self._debug("importDatesConfig:",resultImport)
-		if resultImport['status']:
-			retReadConfig=self.readConf()
-			if retReadConfig["status"]:
-				return [True,resultImport["code"]]
-			else:
-				return [False,retReadConfig["code"]]
-		else:
-			return [False,resultImport["code"]]
+		
+		if not resultImport.get('status'):
+			return {"status":False,"code":resultImport.get("code"),"type":HolidayManager.KIRIGAMI_MSG_ERROR}
+		
+		retReadConfig=self.readConf()
+		if not retReadConfig.get("status"):
+			return {"status":False,"code":retReadConfig.get("code"),"type":HolidayManager.KIRIGAMI_MSG_ERROR}
 
+		return {"status":True,"code":resultImport.get("code"),"type":HolidayManager.KIRIGAMI_MSG_OK}
+	
 	#def importDatesConfigs
 
 	

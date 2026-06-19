@@ -48,15 +48,15 @@ class HolidayModel(QtCore.QAbstractListModel):
 
 	#def roleNames
 
-	def appendRow(self,i,t,d):
+	def appendRow(self,dateId,type,description):
 		
 		tmpId=[]
 		for item in self._entries:
 			tmpId.append(item["id"])
 
-		if i not in tmpId:
+		if dateId not in tmpId:
 			self.beginInsertRows(QtCore.QModelIndex(), self.rowCount(),self.rowCount())
-			self._entries.append(dict(id=i,type=t,description=d))
+			self._entries.append(dict(id=dateId,type=type,description=description))
 			self.endInsertRows()
 
 	#def appendRow
