@@ -1,3 +1,10 @@
+holiday-manager (0.23.8) noble; urgency=medium
+
+  * Refactorized code
+  * Improved general performance
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 19 Jun 2026 10:25:35 +0200
+
 holiday-manager (0.23.7) noble; urgency=medium
 
   * Minor change
