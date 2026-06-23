@@ -339,7 +339,8 @@ class Bridge(QObject):
 	@Slot('QJSValue')
 	def applyDateChanges(self,data):
 
-		data=data.toVariant()
+		if hasattr(data,'toVariant'):
+			data=data.toVariant()
 				
 		self.showDateForm=False
 
@@ -368,7 +369,8 @@ class Bridge(QObject):
 	@Slot('QJSValue')
 	def removeDate(self,data):
 
-		data=data.toVariant()
+		if hasattr(data,'toVariant'):
+			data=data.toVariant()
 
 		self.showMainMessage={"show":False,"msgCode":"","type":""}
 		self.removeAllDates=data.get("removeAll")
